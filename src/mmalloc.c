@@ -24,6 +24,10 @@ void *get_block_data_pointer(block_t* block) {
     return block + sizeof(block_t);
 }
 
+block_t *as_block_pointer(void *ptr) {
+    return ptr - sizeof(block_t);
+}
+
 block_t *get_first_used_block() {
     return USED_BLOCKS;
 }
@@ -50,6 +54,34 @@ void append_to_used_blocks(block_t *block) {
     } else {
         USED_BLOCKS = block;
     }
+}
+
+int remove_from_used_blocks(block_t *block) {
+    block_t *current = get_first_used_block();
+
+    if (!current) {
+        return -1;
+    }
+
+    if (current == block) {
+        USED_BLOCKS = current->next_block;
+        current->next_block = NULL;
+        return 0;
+    }
+
+    block_t *previous;
+    while (current->next_block) {
+        previous = current;
+        current = current->next_block;
+
+        if (current == block) {
+            previous->next_block = current->next_block;
+            current->next_block = NULL;
+            return 0;
+        }
+    }
+
+    return -1;
 }
 
 

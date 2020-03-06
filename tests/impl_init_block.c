@@ -22,5 +22,9 @@ int main() {
     void *dptr = get_block_data_pointer(block);
     assert(dptr == block + sizeof(block_t));
 
+    // check that we can get back to a block pointer from the data pointer
+    block_t *block2 = as_block_pointer(dptr);
+    assert(block2 == block);
+
     return 0;
 }
