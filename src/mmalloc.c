@@ -4,10 +4,53 @@
 #include "mmalloc.h"
 
 
-struct block {
-    size_t sz;
-    struct block* next_block;
-};
+block_t *USED_BLOCKS = NULL;
+block_t *FREE_BLOCKS = NULL;
+
+
+block_t *init_block(void *ptr, size_t size, block_t *next_block) {
+    // Make sure we have enough space for the block header!
+    assert(size >= sizeof(block_t));
+
+    block_t *block = (block_t *) ptr;
+
+    block->sz = size;
+    block->next_block = next_block;
+
+    return block;
+}
+
+void *get_block_data_pointer(block_t* block) {
+    return block + sizeof(block_t);
+}
+
+block_t *get_first_used_block() {
+    return USED_BLOCKS;
+}
+
+block_t *get_last_used_block() {
+    block_t *current = get_first_used_block();
+
+    if (!current) {
+        return NULL;
+    }
+
+    while (current->next_block) {
+        current = current->next_block;
+    }
+
+    return current;
+}
+
+void append_to_used_blocks(block_t *block) {
+    block_t *last = get_last_used_block();
+
+    if (last) {
+        last->next_block = block;
+    } else {
+        USED_BLOCKS = block;
+    }
+}
 
 
 void *mmalloc(size_t size) {
