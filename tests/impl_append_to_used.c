@@ -18,40 +18,40 @@ int main() {
 
     // Before appending there are no used blocks
 
-    block = get_first_used_block();
+    block = GET_FIRST_USED_BLOCK();
     assert(block == NULL);
 
-    block = get_last_used_block();
+    block = GET_LAST_USED_BLOCK();
     assert(block == NULL);
 
     // After appending the first block both the head and tail are the first block
 
-    append_to_used_blocks(fst);
+    APPEND_TO_USED_BLOCKS(fst);
 
-    block = get_first_used_block();
+    block = GET_FIRST_USED_BLOCK();
     assert(block == fst);
 
-    block = get_last_used_block();
+    block = GET_LAST_USED_BLOCK();
     assert(block == fst);
 
     // After appending the second block the head and tail are the first and second
 
-    append_to_used_blocks(snd);
+    APPEND_TO_USED_BLOCKS(snd);
 
-    block = get_first_used_block();
+    block = GET_FIRST_USED_BLOCK();
     assert(block == fst);
 
-    block = get_last_used_block();
+    block = GET_LAST_USED_BLOCK();
     assert(block == snd);
 
     // After appending the third block the head and tail are the first and third
 
-    append_to_used_blocks(thd);
+    APPEND_TO_USED_BLOCKS(thd);
 
-    block = get_first_used_block();
+    block = GET_FIRST_USED_BLOCK();
     assert(block == fst);
 
-    block = get_last_used_block();
+    block = GET_LAST_USED_BLOCK();
     assert(block == thd);
 
     // We can follow the links between the blocks

@@ -30,12 +30,16 @@ block_t *as_block_pointer(void *ptr) {
 
 // List operations
 
-block_t *get_first_used_block() {
-    return USED_BLOCKS;
+block_t **get_used_list_ptr() {
+    return &USED_BLOCKS;
 }
 
-block_t *get_last_used_block() {
-    block_t *current = get_first_used_block();
+block_t *get_first_block(block_t **plist_head) {
+    return *plist_head;
+}
+
+block_t *get_last_block(block_t **plist_head) {
+    block_t *current = get_first_block(plist_head);
 
     if (!current) {
         return NULL;
@@ -48,25 +52,25 @@ block_t *get_last_used_block() {
     return current;
 }
 
-void append_to_used_blocks(block_t *block) {
-    block_t *last = get_last_used_block();
+void append_to_blocks(block_t **plist_head, block_t *block) {
+    block_t *last = get_last_block(plist_head);
 
     if (last) {
         last->next_block = block;
     } else {
-        USED_BLOCKS = block;
+        *plist_head = block;
     }
 }
 
-int remove_from_used_blocks(block_t *block) {
-    block_t *current = get_first_used_block();
+int remove_from_blocks(block_t **plist_head, block_t *block) {
+    block_t *current = get_first_block(plist_head);
 
     if (!current) {
         return -1;
     }
 
     if (current == block) {
-        USED_BLOCKS = current->next_block;
+        *plist_head = current->next_block;
         current->next_block = NULL;
         return 0;
     }
@@ -106,7 +110,7 @@ void *mmalloc(size_t size) {
 
     // block housekeeping
     block_t *block = init_block(ptr_current, size, NULL);
-    append_to_used_blocks(block);
+    APPEND_TO_USED_BLOCKS(block);
     return get_block_data_pointer(block);
 }
 
@@ -118,6 +122,6 @@ void mfree(void *ptr) {
 
     block_t *block = as_block_pointer(ptr);
 
-    int res = remove_from_used_blocks(block);
+    int res = REMOVE_FROM_USED_BLOCKS(block);
     assert(res == 0);
 }
