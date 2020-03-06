@@ -34,12 +34,12 @@ block_t **get_used_list_ptr() {
     return &USED_BLOCKS;
 }
 
-block_t *get_first_block(block_t **plist_head) {
+block_t *get_list_head(block_t **plist_head) {
     return *plist_head;
 }
 
-block_t *get_last_block(block_t **plist_head) {
-    block_t *current = get_first_block(plist_head);
+block_t *get_list_tail(block_t **plist_head) {
+    block_t *current = get_list_head(plist_head);
 
     if (!current) {
         return NULL;
@@ -52,8 +52,8 @@ block_t *get_last_block(block_t **plist_head) {
     return current;
 }
 
-void append_to_blocks(block_t **plist_head, block_t *block) {
-    block_t *last = get_last_block(plist_head);
+void append_to_list(block_t **plist_head, block_t *block) {
+    block_t *last = get_list_tail(plist_head);
 
     if (last) {
         last->next_block = block;
@@ -62,8 +62,8 @@ void append_to_blocks(block_t **plist_head, block_t *block) {
     }
 }
 
-int remove_from_blocks(block_t **plist_head, block_t *block) {
-    block_t *current = get_first_block(plist_head);
+int remove_from_list(block_t **plist_head, block_t *block) {
+    block_t *current = get_list_head(plist_head);
 
     if (!current) {
         return -1;
