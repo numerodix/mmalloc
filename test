@@ -1,0 +1,4 @@
+#!/bin/sh
+
+support/gen-makefile.py
+make tests
