@@ -8,6 +8,8 @@ block_t *USED_BLOCKS = NULL;
 block_t *FREE_BLOCKS = NULL;
 
 
+// Operations on a single block
+
 block_t *init_block(void *ptr, size_t size, block_t *next_block) {
     block_t *block = (block_t *) ptr;
 
@@ -15,10 +17,6 @@ block_t *init_block(void *ptr, size_t size, block_t *next_block) {
     block->next_block = next_block;
 
     return block;
-}
-
-size_t get_block_size() {
-    return sizeof(block_t);
 }
 
 void *get_block_data_pointer(block_t* block) {
@@ -29,6 +27,8 @@ block_t *as_block_pointer(void *ptr) {
     block_t *block = (block_t *) ptr;
     return block - sizeof(block_t);
 }
+
+// List operations
 
 block_t *get_first_used_block() {
     return USED_BLOCKS;
@@ -97,7 +97,7 @@ void *mmalloc(size_t size) {
     assert((size_t) ptr_current != -1);
 
     // compute new break
-    size_t needed_size = size + get_block_size();
+    size_t needed_size = size + sizeof(block_t);
     void *ptr_new = ptr_current + needed_size;
 
     // set the new break
