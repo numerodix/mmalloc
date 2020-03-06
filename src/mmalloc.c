@@ -108,9 +108,11 @@ void *mmalloc(size_t size) {
     int res = brk(ptr_new);
     assert(res == 0);
 
-    // block housekeeping
+    // create a block and add it to the used list
     block_t *block = init_block(ptr_current, size, NULL);
     APPEND_TO_USED_LIST(block);
+
+    // return a data pointer
     return get_block_data_pointer(block);
 }
 
@@ -120,8 +122,10 @@ void mfree(void *ptr) {
         return;
     }
 
+    // used the pointer to find the block
     block_t *block = as_block_pointer(ptr);
 
+    // remove it from the used list
     int res = REMOVE_FROM_USED_LIST(block);
     assert(res == 0);
 }
