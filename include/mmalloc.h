@@ -29,7 +29,7 @@ block_t *get_list_tail(block_t **plist_head);
 void append_to_list(block_t **plist_head, block_t *block);
 int remove_from_list(block_t **plist_head, block_t *block);
 
-#define GET_FIRST_USED_BLOCK() get_list_head(get_used_list_ptr())
-#define GET_LAST_USED_BLOCK() get_list_tail(get_used_list_ptr())
-#define APPEND_TO_USED_BLOCKS(block) append_to_list(get_used_list_ptr(), block)
-#define REMOVE_FROM_USED_BLOCKS(block) remove_from_list(get_used_list_ptr(), block)
+#define GET_USED_LIST_HEAD() get_list_head(get_used_list_ptr())
+#define GET_USED_LIST_TAIL() get_list_tail(get_used_list_ptr())
+#define APPEND_TO_USED_LIST(block) append_to_list(get_used_list_ptr(), block)
+#define REMOVE_FROM_USED_LIST(block) remove_from_list(get_used_list_ptr(), block)

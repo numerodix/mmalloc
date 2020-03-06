@@ -19,61 +19,61 @@ int main() {
 
     // Append the first block and remove it again
 
-    APPEND_TO_USED_BLOCKS(fst);
+    APPEND_TO_USED_LIST(fst);
 
-    res = REMOVE_FROM_USED_BLOCKS(fst);
+    res = REMOVE_FROM_USED_LIST(fst);
     assert(res == 0);
 
-    block = GET_FIRST_USED_BLOCK();
+    block = GET_USED_LIST_HEAD();
     assert(block == NULL);
 
     // Append the first and second - remove the second
 
-    APPEND_TO_USED_BLOCKS(fst);
-    APPEND_TO_USED_BLOCKS(snd);
+    APPEND_TO_USED_LIST(fst);
+    APPEND_TO_USED_LIST(snd);
 
-    res = REMOVE_FROM_USED_BLOCKS(snd);
+    res = REMOVE_FROM_USED_LIST(snd);
     assert(res == 0);
 
-    block = GET_FIRST_USED_BLOCK();
+    block = GET_USED_LIST_HEAD();
     assert(block == fst);
 
-    res = REMOVE_FROM_USED_BLOCKS(fst);
+    res = REMOVE_FROM_USED_LIST(fst);
     assert(res == 0);
 
-    block = GET_FIRST_USED_BLOCK();
+    block = GET_USED_LIST_HEAD();
     assert(block == NULL);
 
     // Append the first and second - remove the first
 
-    APPEND_TO_USED_BLOCKS(fst);
-    APPEND_TO_USED_BLOCKS(snd);
+    APPEND_TO_USED_LIST(fst);
+    APPEND_TO_USED_LIST(snd);
 
-    res = REMOVE_FROM_USED_BLOCKS(fst);
+    res = REMOVE_FROM_USED_LIST(fst);
     assert(res == 0);
 
-    block = GET_FIRST_USED_BLOCK();
+    block = GET_USED_LIST_HEAD();
     assert(block == snd);
 
-    res = REMOVE_FROM_USED_BLOCKS(snd);
+    res = REMOVE_FROM_USED_LIST(snd);
     assert(res == 0);
 
-    block = GET_FIRST_USED_BLOCK();
+    block = GET_USED_LIST_HEAD();
     assert(block == NULL);
 
     // Append all three - remove the second
 
-    APPEND_TO_USED_BLOCKS(fst);
-    APPEND_TO_USED_BLOCKS(snd);
-    APPEND_TO_USED_BLOCKS(thd);
+    APPEND_TO_USED_LIST(fst);
+    APPEND_TO_USED_LIST(snd);
+    APPEND_TO_USED_LIST(thd);
 
-    res = REMOVE_FROM_USED_BLOCKS(snd);
+    res = REMOVE_FROM_USED_LIST(snd);
     assert(res == 0);
 
-    block = GET_FIRST_USED_BLOCK();
+    block = GET_USED_LIST_HEAD();
     assert(block == fst);
 
-    block = GET_LAST_USED_BLOCK();
+    block = GET_USED_LIST_TAIL();
     assert(block == thd);
 
     assert(fst->next_block->sz == thd->sz);

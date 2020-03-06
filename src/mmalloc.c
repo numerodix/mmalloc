@@ -110,7 +110,7 @@ void *mmalloc(size_t size) {
 
     // block housekeeping
     block_t *block = init_block(ptr_current, size, NULL);
-    APPEND_TO_USED_BLOCKS(block);
+    APPEND_TO_USED_LIST(block);
     return get_block_data_pointer(block);
 }
 
@@ -122,6 +122,6 @@ void mfree(void *ptr) {
 
     block_t *block = as_block_pointer(ptr);
 
-    int res = REMOVE_FROM_USED_BLOCKS(block);
+    int res = REMOVE_FROM_USED_LIST(block);
     assert(res == 0);
 }
