@@ -25,7 +25,8 @@ void *get_block_data_pointer(block_t* block) {
 }
 
 block_t *as_block_pointer(void *ptr) {
-    return ptr - sizeof(block_t);
+    block_t *block = (block_t *) ptr;
+    return block - sizeof(block_t);
 }
 
 block_t *get_first_used_block() {
