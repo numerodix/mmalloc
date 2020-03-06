@@ -9,6 +9,8 @@ int main() {
     // - some memory on the stack to overwrite (we will also use a block for that)
 
     block_t target;
+    target.sz = 3;
+
     block_t dummy;
 
     // use the dummy memory to construct a block on top of it, pointing to target
