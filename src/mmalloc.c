@@ -9,15 +9,16 @@ block_t *FREE_BLOCKS = NULL;
 
 
 block_t *init_block(void *ptr, size_t size, block_t *next_block) {
-    // Make sure we have enough space for the block header!
-    assert(size >= sizeof(block_t));
-
     block_t *block = (block_t *) ptr;
 
     block->sz = size;
     block->next_block = next_block;
 
     return block;
+}
+
+size_t get_block_size() {
+    return sizeof(block_t);
 }
 
 void *get_block_data_pointer(block_t* block) {
@@ -96,16 +97,27 @@ void *mmalloc(size_t size) {
     assert((size_t) ptr_current != -1);
 
     // compute new break
-    void *ptr_new = ptr_current + size;
+    size_t needed_size = size + get_block_size();
+    void *ptr_new = ptr_current + needed_size;
 
     // set the new break
     int res = brk(ptr_new);
     assert(res == 0);
 
-    return ptr_current;
+    // block housekeeping
+    block_t *block = init_block(ptr_current, size, NULL);
+    append_to_used_blocks(block);
+    return get_block_data_pointer(block);
 }
 
 
 void mfree(void *ptr) {
+    if (!ptr) {
+        return;
+    }
 
+    block_t *block = as_block_pointer(ptr);
+
+    int res = remove_from_used_blocks(block);
+    assert(res == 0);
 }

@@ -12,10 +12,10 @@ int main() {
     block_t dummy;
 
     // use the dummy memory to construct a block on top of it, pointing to target
-    block_t *block = init_block(&dummy, 16, &target);
+    block_t *block = init_block(&dummy, 1, &target);
 
     // check that it was constructed correctly
-    assert(block->sz == 16);
+    assert(block->sz == 1);
     assert(block->next_block->sz == target.sz);
 
     // check that the block data pointer points just past the block header
