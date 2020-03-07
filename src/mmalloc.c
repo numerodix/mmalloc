@@ -30,6 +30,10 @@ block_t *as_block_pointer(void *ptr) {
 
 // List operations
 
+block_t **get_free_list_ptr() {
+    return &FREE_BLOCKS;
+}
+
 block_t **get_used_list_ptr() {
     return &USED_BLOCKS;
 }
@@ -88,6 +92,34 @@ int remove_from_list(block_t **plist_head, block_t *block) {
     }
 
     return -1;
+}
+
+block_t *pop_from_list(block_t **plist_head, size_t min_size) {
+    block_t *current = get_list_head(plist_head);
+
+    if (!current) {
+        return NULL;
+    }
+
+    if (current->sz >= min_size) {
+        *plist_head = current->next_block;
+        current->next_block = NULL;
+        return current;
+    }
+
+    block_t *previous;
+    while (current->next_block) {
+        previous = current;
+        current = current->next_block;
+
+        if (current->sz >= min_size) {
+            previous->next_block = current->next_block;
+            current->next_block = NULL;
+            return current;
+        }
+    }
+
+    return NULL;
 }
 
 
