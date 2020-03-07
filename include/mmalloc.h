@@ -5,4 +5,6 @@
 
 void *mmalloc(size_t size);
 
+void *mcalloc(size_t nmemb, size_t size);
+
 void mfree(void *ptr);

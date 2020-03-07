@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "mlist.h"
@@ -38,6 +39,20 @@ void *mmalloc(size_t size) {
 
     // return a data pointer
     return get_block_data_pointer(block);
+}
+
+
+void *mcalloc(size_t nmemb, size_t size) {
+    size_t size_needed = nmemb * size;
+
+    void *ptr = mmalloc(size_needed);
+    if (!ptr) {
+        return NULL;
+    }
+
+    memset(ptr, 0, size_needed);
+
+    return ptr;
 }
 
 
