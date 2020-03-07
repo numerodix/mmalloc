@@ -106,6 +106,7 @@ class Generator:
             self.generate_test_target(testfile, sources, headers)
             for testfile in tests
         ]
+        targets.sort(key=lambda target: target.name)
 
         return targets
 
