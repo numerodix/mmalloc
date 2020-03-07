@@ -76,7 +76,7 @@ int main() {
     block = GET_USED_LIST_TAIL();
     assert(block == thd);
 
-    assert(fst->next_block->sz == thd->sz);
+    assert(fst->next_block->size == thd->size);
 
     return 0;
 }

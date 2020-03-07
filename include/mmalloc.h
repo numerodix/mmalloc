@@ -13,7 +13,7 @@ void mfree(void *ptr);
 // of memory that malloc returns.
 // Successive allocations return blocks that participate in a linked list.
 struct _block {
-    size_t sz;
+    size_t size;
     struct _block* next_block;
 };
 typedef struct _block block_t;

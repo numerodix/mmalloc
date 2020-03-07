@@ -9,7 +9,7 @@ int main() {
     // - some memory on the stack to overwrite (we will also use a block for that)
 
     block_t target;
-    target.sz = 3;
+    target.size = 3;
 
     block_t dummy;
 
@@ -17,8 +17,8 @@ int main() {
     block_t *block = init_block(&dummy, 1, &target);
 
     // check that it was constructed correctly
-    assert(block->sz == 1);
-    assert(block->next_block->sz == target.sz);
+    assert(block->size == 1);
+    assert(block->next_block->size == target.size);
 
     // check that the block data pointer points just past the block header
     void *dptr = get_block_data_pointer(block);

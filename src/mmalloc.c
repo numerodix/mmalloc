@@ -13,7 +13,7 @@ block_t *FREE_BLOCKS = NULL;
 block_t *init_block(void *ptr, size_t size, block_t *next_block) {
     block_t *block = (block_t *) ptr;
 
-    block->sz = size;
+    block->size = size;
     block->next_block = next_block;
 
     return block;
@@ -101,7 +101,7 @@ block_t *pop_from_list(block_t **plist_head, size_t min_size) {
         return NULL;
     }
 
-    if (current->sz >= min_size) {
+    if (current->size >= min_size) {
         *plist_head = current->next_block;
         current->next_block = NULL;
         return current;
@@ -112,7 +112,7 @@ block_t *pop_from_list(block_t **plist_head, size_t min_size) {
         previous = current;
         current = current->next_block;
 
-        if (current->sz >= min_size) {
+        if (current->size >= min_size) {
             previous->next_block = current->next_block;
             current->next_block = NULL;
             return current;
