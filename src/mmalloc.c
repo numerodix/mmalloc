@@ -116,3 +116,23 @@ void mfree(void *ptr) {
     // append it to the free list
     APPEND_TO_FREE_LIST(block);
 }
+
+
+
+#ifdef EXPORT_REAL_API
+void *malloc(size_t size) {
+    return mmalloc(size);
+}
+
+void *calloc(size_t nmemb, size_t size) {
+    return mcalloc(nmemb, size);
+}
+
+void *realloc(void *ptr, size_t size) {
+    return mrealloc(ptr, size);
+}
+
+void free(void *ptr) {
+    return mfree(ptr);
+}
+#endif
