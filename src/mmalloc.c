@@ -1,8 +1,8 @@
 #include <assert.h>
 #include <unistd.h>
 
-#include "mmalloc.h"
 #include "mlist.h"
+#include "mmalloc.h"
 
 
 void *mmalloc(size_t size) {
