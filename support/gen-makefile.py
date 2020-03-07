@@ -6,7 +6,7 @@ import os
 COMPILER = 'cc'
 
 CFLAGS = [
-    '-std=gnu99',
+    '-std=gnu11',
     '-Wall',
     '-Werror',
     '-g',
