@@ -10,6 +10,16 @@ void *mmalloc(size_t size) {
         return NULL;
     }
 
+    // try to re-use a block from the free list
+    block_t *block = POP_FROM_FREE_LIST(size);
+    if (block) {
+        // add it to the used list
+        APPEND_TO_USED_LIST(block);
+
+        // return a data pointer
+        return get_block_data_pointer(block);
+    }
+
     // look up the current break
     void *ptr_current = sbrk(0);
     assert((size_t) ptr_current != -1);
@@ -23,7 +33,7 @@ void *mmalloc(size_t size) {
     assert(res == 0);
 
     // create a block and add it to the used list
-    block_t *block = init_block(ptr_current, size, NULL);
+    block = init_block(ptr_current, size, NULL);
     APPEND_TO_USED_LIST(block);
 
     // return a data pointer
@@ -42,4 +52,7 @@ void mfree(void *ptr) {
     // remove it from the used list
     int res = REMOVE_FROM_USED_LIST(block);
     assert(res == 0);
+
+    // append it to the free list
+    APPEND_TO_FREE_LIST(block);
 }

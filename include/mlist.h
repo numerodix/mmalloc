@@ -16,7 +16,10 @@ typedef struct _block block_t;
 // Constructs a block at location `ptr`.
 block_t *init_block(void *ptr, size_t size, block_t *next_block);
 
+// Returns a pointer to the data location of a block
 void *get_block_data_pointer(block_t* block);
+
+// Given a data location, returns a pointer to its block
 block_t *as_block_pointer(void *ptr);
 
 
