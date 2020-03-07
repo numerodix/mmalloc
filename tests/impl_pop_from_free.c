@@ -1,6 +1,7 @@
 #include <assert.h>
 
 #include "mmalloc.h"
+#include "mlist.h"
 
 
 int main() {
@@ -29,7 +30,7 @@ int main() {
     block = GET_FREE_LIST_HEAD();
     assert(block == NULL);
 
-    // // Append the first and second - pop the second
+    // Append the first and second - pop the second
 
     APPEND_TO_FREE_LIST(fst);
     APPEND_TO_FREE_LIST(snd);

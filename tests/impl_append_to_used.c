@@ -1,6 +1,7 @@
 #include <assert.h>
 
 #include "mmalloc.h"
+#include "mlist.h"
 
 
 int main() {
