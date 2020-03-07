@@ -5,21 +5,31 @@
 #include "mmalloc.h"
 
 
-char userdata[] = "hi there";
+char userdata_small[] = "hi there";
+char userdata[] = "hi there, champ!";
 
 int main() {
-    void *buffer = mmalloc(sizeof(userdata) / 2);
-    assert(buffer != NULL);
+    int res;
+
+    void *buffer_small = mmalloc(sizeof(userdata_small));
+    assert(buffer_small != NULL);
+
+    // fill it with a known contents
+    memcpy(buffer_small, userdata_small, sizeof(userdata_small));
 
     // when called with a bigger size return a chunk big enough
-    buffer = mrealloc(buffer, sizeof(userdata));
+    void *buffer = mrealloc(buffer_small, sizeof(userdata));
     assert(buffer != NULL);
+
+    // check that the contents in the smaller chunk haven't changed
+    res = memcmp(buffer, userdata_small, sizeof(userdata_small));
+    assert(res == 0);
 
     // fill it with a known contents
     memcpy(buffer, userdata, sizeof(userdata));
 
     // check that it was filled successfully
-    int res = memcmp(buffer, userdata, sizeof(userdata));
+    res = memcmp(buffer, userdata, sizeof(userdata));
     assert(res == 0);
 
     // de-allocate the buffer

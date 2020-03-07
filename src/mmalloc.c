@@ -69,27 +69,35 @@ void *mrealloc(void *ptr, size_t size) {
     }
 
     // use the pointer to find the block
-    block_t *block = as_block_pointer(ptr);
+    block_t *block_existing = as_block_pointer(ptr);
 
     // if we've allocated it before it has to be in the used list - remove it
-    int res = REMOVE_FROM_USED_LIST(block);
+    int res = REMOVE_FROM_USED_LIST(block_existing);
     assert(res == 0);
 
     // is the block big enough to satisfy this new request?
-    if (size <= block->size) {
+    if (size <= block_existing->size) {
         // re-add to the used list
-        APPEND_TO_USED_LIST(block);
+        APPEND_TO_USED_LIST(block_existing);
 
         // return a data pointer
-        return get_block_data_pointer(block);
-
-    // otherwise add it to the free list and allocate a fresh one
-    } else {
-        // append it to the free list
-        APPEND_TO_FREE_LIST(block);
-
-        return mmalloc(size);
+        return get_block_data_pointer(block_existing);
     }
+
+    // it's too small: append it to the free list
+    APPEND_TO_FREE_LIST(block_existing);
+
+    // use malloc to get a new block
+    void* ptr_new = mmalloc(size);
+    if (!ptr_new) {
+        return NULL;
+    }
+
+    // copy the contents of the existing block into it
+    memcpy(ptr_new, ptr, block_existing->size);
+
+    // return a data pointer to the new block
+    return ptr_new;
 }
 
 
