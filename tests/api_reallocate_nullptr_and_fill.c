@@ -1,7 +1,5 @@
 #include <assert.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "mmalloc.h"
@@ -10,8 +8,8 @@
 char userdata[] = "hi there";
 
 int main() {
-    // allocate a buffer
-    char *buffer = (char*) mmalloc(sizeof(userdata));
+    // when called with NULL realloc is equivalent to malloc
+    void *buffer = mrealloc(NULL, sizeof(userdata));
     assert(buffer != NULL);
 
     // fill it with a known contents
