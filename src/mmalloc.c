@@ -1,4 +1,5 @@
 #include <assert.h>
+// #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -10,7 +11,34 @@
 // to fail sometimes, when the allocation is 5-10mb large. Add some padding.
 #define PADDING (1 << 10)
 
+
+void print_trace(size_t val) {
+    // Low level output of the allocation size. Have to use `write` since:
+    // - printf uses malloc
+    // - even putchar interferes with some programs
+
+    // 29 chars + \0
+    char buf[30] = "malloc:                     \n";
+    char ascii_code_zero = 48;
+
+    int pos = sizeof(buf) - 3;
+    while (val >= 10) {
+        char digit = val % 10;
+        buf[pos--] = ascii_code_zero + digit;
+        val = val / 10;
+    }
+    buf[pos] = ascii_code_zero + val;
+
+    // write to stderr
+    write(2, buf, sizeof(buf));
+}
+
+
 void *mmalloc(size_t size) {
+#ifdef EXPORT_REAL_API
+    print_trace(size);
+#endif
+
     if (size == 0) {
         return NULL;
     }

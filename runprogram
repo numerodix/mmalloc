@@ -7,8 +7,9 @@ mkdir -p bin
 cc -std=gnu99 -Wall -Werror -g -shared -fPIC -DEXPORT_REAL_API -I include \
     -o bin/malloc.so src/*
 
-export LD_PRELOAD=`pwd`/bin/malloc.so
+ulimit -c unlimited  # allow core file to be written
+rm -f core  # remove previous if any
 
-ulimit -c unlimited
+export LD_PRELOAD=`pwd`/bin/malloc.so
 
 $@
