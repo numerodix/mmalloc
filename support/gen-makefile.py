@@ -12,10 +12,18 @@ CFLAGS = [
     '-g',
 ]
 
+SOFLAGS = [
+    '-shared',
+    '-fPIC',
+    '-DEXPORT_REAL_API',
+]
+
 BINARIES_LOCATION = 'bin'
 HEADERS_LOCATION = 'include'
 SOURCES_LOCATION = 'src'
 TESTS_LOCATION = 'tests'
+
+SHARED_LIB_NAME = os.path.join(BINARIES_LOCATION, 'mmalloc.so')
 
 
 class CFile:
@@ -69,8 +77,11 @@ class Generator:
 
     def generate_constants(self):
         cflags = ' '.join(CFLAGS)
+        soflags = ' '.join(SOFLAGS)
         lines = [
+            'CC := %s' % COMPILER,
             'CFLAGS := %s' % cflags,
+            'SOFLAGS := %s' % soflags,
         ]
         return self.to_block(lines)
 
@@ -84,12 +95,11 @@ class Generator:
         block = (
             '%(target)s: %(deps)s\n'
             '\t@mkdir -p %(binaries_loc)s\n'
-            '\t%(compiler)s $(CFLAGS) -I %(header_loc)s -o $@ %(source)s %(inputs)s'
+            '\t$(CC) $(CFLAGS) -I %(header_loc)s -o $@ %(source)s %(inputs)s'
         ) % dict(
             target=target,
             deps=deps,
             binaries_loc=BINARIES_LOCATION,
-            compiler=COMPILER,
             header_loc=HEADERS_LOCATION,
             source=testfile.filepath,
             inputs=inputs,
@@ -110,7 +120,31 @@ class Generator:
 
         return targets
 
-    def generate_group_targets(self, test_targets):
+    def generate_shared_lib_targets(self):
+        headers = self.get_header_files()
+        sources = self.get_source_files()
+
+        target = SHARED_LIB_NAME
+        dep_files = sources + headers
+        deps = ' '.join([dep.filepath for dep in dep_files])
+        inputs = ' '.join([source.filepath for source in sources])
+
+        block = (
+            '%(target)s: %(deps)s\n'
+            '\t@mkdir -p %(binaries_loc)s\n'
+            '\t$(CC) $(CFLAGS) $(SOFLAGS) -I %(header_loc)s -o $@ %(inputs)s'
+        ) % dict(
+            target=target,
+            deps=deps,
+            binaries_loc=BINARIES_LOCATION,
+            header_loc=HEADERS_LOCATION,
+            inputs=inputs,
+        )
+
+        target = Target(name=target, block=block)
+        return [target]
+
+    def generate_group_targets(self, test_targets, shared_lib_targets):
         build_tests_name = 'build-tests'
         deps = ' '.join([target.name for target in test_targets])
         build_tests_block = '%s: %s' % (build_tests_name, deps)
@@ -130,8 +164,17 @@ class Generator:
         run_tests = Target(name=run_tests_name, block=run_tests_block)
 
         tests_name = 'tests'
-        tests_block = '%s: %s %s' % (tests_name, build_tests_name, run_tests_name)
+        tests_block = '%s: %s %s' % (
+            tests_name, build_tests_name, run_tests_name)
         tests = Target(name=tests_name, block=tests_block)
+
+        build_shared_libs_name = 'build-shared-libraries'
+        deps = ' '.join([target.name for target in shared_lib_targets])
+        build_shared_lib_block = '%s: %s' % (build_shared_libs_name, deps)
+        build_shared_libs = Target(
+            name=build_shared_libs_name,
+            block=build_shared_lib_block,
+        )
 
         clean_name = 'clean'
         clean_block = (
@@ -147,6 +190,7 @@ class Generator:
             build_tests,
             run_tests,
             tests,
+            build_shared_libs,
             clean,
         ]
 
@@ -166,7 +210,16 @@ class Generator:
             sep=2
         )
 
-        group_targets = self.generate_group_targets(test_targets)
+        shared_lib_targets = self.generate_shared_lib_targets()
+        shared_lib_targets_block = self.to_block(
+            [target.block for target in shared_lib_targets],
+            sep=2
+        )
+
+        group_targets = self.generate_group_targets(
+            test_targets,
+            shared_lib_targets,
+        )
         group_targets_block = self.to_block(
             [target.block for target in group_targets],
             sep=2
@@ -178,6 +231,7 @@ class Generator:
             phony_block,
             constants_block,
             test_targets_block,
+            shared_lib_targets_block,
             group_targets_block,
         ]
 
