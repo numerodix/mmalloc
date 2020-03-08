@@ -5,9 +5,13 @@
 
 
 int main() {
-    // when trying to allocate zero bytes malloc should return NULL
-    void *ptr = mmalloc((size_t) 0);
-    assert(ptr == NULL);
+    // when trying to allocate zero bytes malloc should return a pointer
+    // that free will accept
+    void *ptr = mmalloc(0);
+    assert(ptr != NULL);
+
+    // de-allocate the buffer
+    mfree(ptr);
 
     return 0;
 }

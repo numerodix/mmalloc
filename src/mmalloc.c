@@ -38,10 +38,6 @@ void *mmalloc(size_t size) {
     print_trace(size);
 #endif
 
-    if (size == 0) {
-        return NULL;
-    }
-
     // try to re-use a block from the free list
     block_t *block = POP_FROM_FREE_LIST(size);
     if (block) {
