@@ -6,6 +6,10 @@
 #include "mmalloc.h"
 
 
+// For some reason accessing memory right at the end of the heap seems
+// to fail sometimes, when the allocation is 5-10mb large. Add some padding.
+#define PADDING (1 << 10)
+
 void *mmalloc(size_t size) {
     if (size == 0) {
         return NULL;
@@ -27,7 +31,7 @@ void *mmalloc(size_t size) {
 
     // compute new break
     size_t needed_size = size + sizeof(block_t);
-    void *ptr_new = ptr_current + needed_size;
+    void *ptr_new = ptr_current + needed_size + PADDING;
 
     // set the new break
     int res = brk(ptr_new);
