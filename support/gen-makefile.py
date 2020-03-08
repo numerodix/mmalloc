@@ -16,6 +16,7 @@ SOFLAGS = [
     '-shared',
     '-fPIC',
     '-DEXPORT_REAL_API',
+    '-DTRACE',
 ]
 
 BINARIES_LOCATION = 'bin'
