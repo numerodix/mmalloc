@@ -10,5 +10,20 @@ No blocks from the free list are ever released back to the OS. The heap only
 grows, never shrinks.
 
 Most obvious shortcomings:
+- When picking a block from the free list the first block big enough is chosen,
+  with no effort to find one that is optimal size for the request.
 - Allocations are not aligned.
-- Not thread safe.
+- The implementation is not thread safe.
+
+The implementation is functional enough to run some simple programs with it,
+eg. ls, ps, cat, hostname, uname:
+
+```
+$ ./runprogram uname -a
+```
+
+The code was developed in a test driven style. Run the tests with:
+
+```
+$ ./test
+```
