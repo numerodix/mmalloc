@@ -23,10 +23,10 @@ void *get_block_data_pointer(block_t* block);
 block_t *as_block_pointer(void *ptr);
 
 
-// Returns a pointer to head pointer to the free list
+// Returns a pointer to the head pointer of the free list
 block_t **get_free_list_ptr();
 
-// Returns a pointer to head pointer to the used list
+// Returns a pointer to the head pointer of the used list
 block_t **get_used_list_ptr();
 
 // Returns a pointer to the block at the head of the list
