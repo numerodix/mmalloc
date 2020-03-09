@@ -15,6 +15,7 @@ CFLAGS = [
 SOFLAGS = [
     '-shared',
     '-fPIC',
+    '-fvisibility=hidden',
     '-DEXPORT_REAL_API',
     '-DTRACE',
 ]

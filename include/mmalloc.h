@@ -10,8 +10,8 @@ void mfree(void *ptr);
 
 
 #ifdef EXPORT_REAL_API
-void *malloc(size_t size);
-void *calloc(size_t nmemb, size_t size);
-void *realloc(void *ptr, size_t size);
-void free(void *ptr);
+__attribute__ ((visibility ("default"))) void *malloc(size_t size);
+__attribute__ ((visibility ("default"))) void *calloc(size_t nmemb, size_t size);
+__attribute__ ((visibility ("default"))) void *realloc(void *ptr, size_t size);
+__attribute__ ((visibility ("default"))) void free(void *ptr);
 #endif
