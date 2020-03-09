@@ -12,6 +12,7 @@ CFLAGS = [
     '-Werror',
     '-Wextra',
     '-g',
+    '-pthread',
 ]
 
 SOFLAGS = [
