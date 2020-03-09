@@ -124,7 +124,7 @@ int main() {
         bool expected = cases[i][2];
 
         // we've reached the sentinel
-        if (location == -1) {
+        if (location == (size_t) -1) {
             break;
         }
 

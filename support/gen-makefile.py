@@ -7,8 +7,10 @@ COMPILER = 'cc'
 
 CFLAGS = [
     '-std=gnu11',
+    '-pedantic',
     '-Wall',
     '-Werror',
+    '-Wextra',
     '-g',
 ]
 

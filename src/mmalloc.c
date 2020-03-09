@@ -30,17 +30,17 @@ void *mmalloc(size_t size) {
 
     // look up the current break
     void *ptr_current = sbrk(0);
-    assert((size_t) ptr_current != -1);
+    assert((size_t) ptr_current != (size_t) -1);
 
     // align the base of the new allocation
     void *ptr_aligned = (void *) align_location((size_t) ptr_current, ALIGNMENT);
     if (ptr_aligned < ptr_current) {
-        ptr_aligned += ALIGNMENT;
+        ptr_aligned = (void *) (((size_t) ptr_aligned) + ALIGNMENT);
     }
 
     // compute new break
     size_t needed_size = size + sizeof(block_t);
-    void *ptr_new = ptr_aligned + needed_size + PADDING;
+    void *ptr_new = (void *) (((size_t) ptr_aligned) + needed_size + PADDING);
 
     // set the new break
     int res = brk(ptr_new);
@@ -204,6 +204,6 @@ void free(void *ptr) {
     print_trace(F_FREE, 0);
 #endif
 
-    return mfree(ptr);
+    mfree(ptr);
 }
 #endif
