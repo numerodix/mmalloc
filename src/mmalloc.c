@@ -38,8 +38,14 @@ void *mmalloc(size_t size) {
         ptr_aligned = (void *) (((size_t) ptr_aligned) + ALIGNMENT);
     }
 
+    // align the size too
+    size_t size_aligned = align_location(size, ALIGNMENT);
+    if (size_aligned < size) {
+        size_aligned += ALIGNMENT;
+    }
+
     // compute new break
-    size_t needed_size = size + sizeof(block_t);
+    size_t needed_size = size_aligned + sizeof(block_t);
     void *ptr_new = (void *) (((size_t) ptr_aligned) + needed_size + PADDING);
 
     // set the new break
@@ -47,7 +53,7 @@ void *mmalloc(size_t size) {
     assert(res == 0);
 
     // create a block and add it to the used list
-    block = init_block(ptr_aligned, size, NULL);
+    block = init_block(ptr_aligned, size_aligned, NULL);
     APPEND_TO_USED_LIST(block);
 
     // return a data pointer
