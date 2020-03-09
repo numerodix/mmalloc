@@ -27,3 +27,8 @@ The code was developed in a test driven style. Run the tests with:
 ```
 $ ./test
 ```
+
+Portability:
+
+* Assumes 64bit system.
+* Assumes `size_t` is an unsigned long (64bit).
