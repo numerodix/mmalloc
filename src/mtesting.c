@@ -6,7 +6,9 @@
 
 
 int set_rand48_seed() {
-    long seed_val = (long) time(NULL);
+    struct timespec ts;
+    timespec_get(&ts, TIME_UTC);
+    long seed_val = ts.tv_sec | ts.tv_nsec;
 
     srand48(seed_val);
 
