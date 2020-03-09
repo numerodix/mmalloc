@@ -1,25 +1,10 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "malign.h"
 #include "mmalloc.h"
-
-
-size_t sizes[] = {
-    2,
-    1,
-    125,
-    11,
-    4097,
-    34,
-    20000,
-    13,
-    15,
-    14,
-
-    -1,   // sentinel
-};
 
 
 void report_unaligned(size_t size, size_t location, size_t alignment, bool aligned) {
@@ -33,16 +18,17 @@ void report_unaligned(size_t size, size_t location, size_t alignment, bool align
 
 
 int main() {
-    int i = 0;
     int num_unaligned = 0;
 
-    while (1) {
-        size_t size = sizes[i];
+    int min_size = 1 << 4;
+    int max_size = 10 << 20;
 
-        // we've reached the sentinel
-        if (size == -1) {
-            break;
-        }
+    long seed_val = (long) time(NULL);
+    printf("Using seed value: %ld\n", seed_val);
+    srand48(seed_val);
+
+    for (int i = 0; i < 10; i++) {
+        size_t size = drand48() * max_size + min_size;
 
         void *ptr = mmalloc(size);
         assert(ptr != NULL);
@@ -58,8 +44,6 @@ int main() {
         if ((!aligned_8) || (!aligned_16)) {
             num_unaligned++;
         }
-
-        i++;
     }
 
     if (num_unaligned) {

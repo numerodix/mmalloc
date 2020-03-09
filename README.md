@@ -9,14 +9,17 @@ of the heap to create a new block.
 No blocks from the free list are ever released back to the OS. The heap only
 grows, never shrinks.
 
+Allocations are aligned at 16 byte boundaries.
+
 Most obvious shortcomings:
+- Blocks are sized according to the size requested instead of using more
+  reusable powers-of-2 sizes.
 - When picking a block from the free list the first block big enough is chosen,
   with no effort to find one that is optimal size for the request.
-- Allocations are not aligned.
 - The implementation is not thread safe.
 
-The implementation is functional enough to run some simple programs with it,
-eg. ls, ps, cat, hostname, uname:
+The implementation is functional enough to run some single threaded programs
+with it, eg. ls, ps, cat, hostname, uname:
 
 ```
 $ ./runprogram uname -a

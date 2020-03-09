@@ -2,6 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "malign.h"
 #include "mlist.h"
 #include "mmalloc.h"
 
@@ -9,6 +10,11 @@
 // For some reason accessing memory right at the end of the heap seems
 // to fail sometimes, when the allocation is 5-10mb large. Add some padding.
 #define PADDING (1 << 10)
+
+// System malloc seems to always return addresses that are aligned to 16 bytes.
+// The size of `block_t` is also 16 bytes so if we align the pointer and add
+// the offset needed for `block_t` we'll have the same end result.
+#define ALIGNMENT 16
 
 
 void *mmalloc(size_t size) {
@@ -26,16 +32,22 @@ void *mmalloc(size_t size) {
     void *ptr_current = sbrk(0);
     assert((size_t) ptr_current != -1);
 
+    // align the base of the new allocation
+    void *ptr_aligned = (void *) align_location((size_t) ptr_current, ALIGNMENT);
+    if (ptr_aligned < ptr_current) {
+        ptr_aligned += ALIGNMENT;
+    }
+
     // compute new break
     size_t needed_size = size + sizeof(block_t);
-    void *ptr_new = ptr_current + needed_size + PADDING;
+    void *ptr_new = ptr_aligned + needed_size + PADDING;
 
     // set the new break
     int res = brk(ptr_new);
     assert(res == 0);
 
     // create a block and add it to the used list
-    block = init_block(ptr_current, size, NULL);
+    block = init_block(ptr_aligned, size, NULL);
     APPEND_TO_USED_LIST(block);
 
     // return a data pointer
