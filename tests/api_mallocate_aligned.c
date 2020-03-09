@@ -5,6 +5,7 @@
 
 #include "malign.h"
 #include "mmalloc.h"
+#include "mtesting.h"
 
 
 void report_unaligned(size_t size, size_t location, size_t alignment, bool aligned) {
@@ -23,12 +24,11 @@ int main() {
     int min_size = 1 << 4;
     int max_size = 10 << 20;
 
-    long seed_val = (long) time(NULL);
+    long seed_val = set_rand48_seed();
     printf("Using seed value: %ld\n", seed_val);
-    srand48(seed_val);
 
     for (int i = 0; i < 10; i++) {
-        size_t size = drand48() * max_size + min_size;
+        size_t size = get_random_int(min_size, max_size);
 
         void *ptr = mmalloc(size);
         assert(ptr != NULL);
