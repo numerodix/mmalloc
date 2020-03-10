@@ -25,10 +25,18 @@ void *worker(void *arg) {
 
     for (int i=0; i < 10; i++) {
         int size = get_random_int(min_size, max_size);
-
-        printf("[thread %d] allocating buffer of size: %d bytes\n", *id, size);
+        printf("[thread %d] allocating buffer of size   : %d bytes\n", *id, size);
 
         void *ptr = mmalloc(size);
+        assert(ptr != NULL);
+
+        // sleep to encourage a context switch
+        usleep(1000);
+
+        size = get_random_int(min_size, max_size);
+        printf("[thread %d] re-allocating buffer of size: %d bytes\n", *id, size);
+
+        ptr = mrealloc(ptr, size);
         assert(ptr != NULL);
 
         // sleep to encourage a context switch

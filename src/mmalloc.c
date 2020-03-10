@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <pthread.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -16,13 +17,23 @@
 // the offset needed for `block_t` we'll have the same end result.
 #define ALIGNMENT 16
 
+// We need a mutex to synchronize access to pointers read/written from
+// different threads.
+pthread_mutex_t lock;
+
 
 void *mmalloc(size_t size) {
+    // enter critical section: take lock
+    assert(0 == pthread_mutex_lock(&lock));
+
     // try to re-use a block from the free list
     block_t *block = POP_FROM_FREE_LIST(size);
     if (block) {
         // add it to the used list
         APPEND_TO_USED_LIST(block);
+
+        // exit critical section: release lock
+        assert(0 == pthread_mutex_unlock(&lock));
 
         // return a data pointer
         return get_block_data_pointer(block);
@@ -55,6 +66,9 @@ void *mmalloc(size_t size) {
     // create a block and add it to the used list
     block = init_block(ptr_aligned, size_aligned, NULL);
     APPEND_TO_USED_LIST(block);
+
+    // exit critical section: release lock
+    assert(0 == pthread_mutex_unlock(&lock));
 
     // return a data pointer
     return get_block_data_pointer(block);
@@ -90,6 +104,9 @@ void *mrealloc(void *ptr, size_t size) {
     // use the pointer to find the block
     block_t *block_existing = as_block_pointer(ptr);
 
+    // enter critical section: take lock
+    assert(0 == pthread_mutex_lock(&lock));
+
     // if we've allocated it before it has to be in the used list - remove it
     int res = REMOVE_FROM_USED_LIST(block_existing);
     assert(res == 0);
@@ -99,12 +116,21 @@ void *mrealloc(void *ptr, size_t size) {
         // re-add to the used list
         APPEND_TO_USED_LIST(block_existing);
 
+        // exit critical section: release lock
+        assert(0 == pthread_mutex_unlock(&lock));
+
         // return a data pointer
-        return get_block_data_pointer(block_existing);
+        return ptr;
     }
 
     // it's too small: append it to the free list
     APPEND_TO_FREE_LIST(block_existing);
+
+    // read from the block before we exit the critical section
+    size_t existing_size = block_existing->size;
+
+    // exit critical section: release lock
+    assert(0 == pthread_mutex_unlock(&lock));
 
     // use malloc to get a new block
     void* ptr_new = mmalloc(size);
@@ -113,7 +139,7 @@ void *mrealloc(void *ptr, size_t size) {
     }
 
     // copy the contents of the existing block into it
-    memcpy(ptr_new, ptr, block_existing->size);
+    memcpy(ptr_new, ptr, existing_size);
 
     // return a data pointer to the new block
     return ptr_new;
@@ -128,12 +154,18 @@ void mfree(void *ptr) {
     // use the pointer to find the block
     block_t *block = as_block_pointer(ptr);
 
+    // enter critical section: take lock
+    assert(0 == pthread_mutex_lock(&lock));
+
     // remove it from the used list
     int res = REMOVE_FROM_USED_LIST(block);
     assert(res == 0);
 
     // append it to the free list
     APPEND_TO_FREE_LIST(block);
+
+    // exit critical section: release lock
+    assert(0 == pthread_mutex_unlock(&lock));
 }
 
 

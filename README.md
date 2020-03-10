@@ -11,18 +11,19 @@ grows, never shrinks.
 
 Allocations are aligned at 16 byte boundaries.
 
+A mutex is used to ensure exclusive access to shared data structures.
+
 Most obvious shortcomings:
 - Blocks are sized according to the size requested instead of using more
   reusable powers-of-2 sizes.
 - When picking a block from the free list the first block big enough is chosen,
   with no effort to find one that is optimal size for the request.
-- The implementation is not thread safe.
 
-The implementation is functional enough to run some single threaded programs
-with it, eg. ls, ps, cat, hostname, uname:
+The implementation is functional enough to run both single threaded and multi
+threaded programs with it, eg. ls, ps, cat, hostname, uname, javac:
 
 ```
-$ ./runprogram uname -a
+$ ./runprogram ls
 ```
 
 The code was developed in a test driven style. Run the tests with:
