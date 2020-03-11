@@ -4,21 +4,17 @@
 
 
 int main() {
-    // We need two things here:
-    // - a target block to use as next_block
-    // - some memory on the stack to overwrite (we will also use a block for that)
-
-    block_t target;
-    target.size = 3;
+    // We need some memory on the stack to overwrite
+    // (we will also use a block for that)
 
     block_t dummy;
 
-    // use the dummy memory to construct a block on top of it, pointing to target
-    block_t *block = init_block(&dummy, 1, &target);
+    // use the dummy memory to construct a block on top of it
+    block_t *block = init_block(&dummy, 7);
 
     // check that it was constructed correctly
-    assert(block->size == 1);
-    assert(block->next_block->size == target.size);
+    assert(block->size == 7);
+    assert(block->next_block == NULL);
 
     // check that the block data pointer points just past the block header
     void *dptr = get_block_data_pointer(block);

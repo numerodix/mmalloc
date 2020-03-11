@@ -11,11 +11,11 @@ block_t *FREE_BLOCKS = NULL;
 
 // Operations on a single block
 
-block_t *init_block(void *ptr, size_t size, block_t *next_block) {
+block_t *init_block(void *ptr, size_t size) {
     block_t *block = (block_t *) ptr;
 
     block->size = size;
-    block->next_block = next_block;
+    block->next_block = NULL;
 
     return block;
 }

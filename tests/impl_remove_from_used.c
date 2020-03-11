@@ -13,9 +13,9 @@ int main() {
     block_t *block;
     int res;
 
-    block_t *fst = init_block(&dummy1, 27, NULL);
-    block_t *snd = init_block(&dummy2, 33, NULL);
-    block_t *thd = init_block(&dummy3, 48, NULL);
+    block_t *fst = init_block(&dummy1, 27);
+    block_t *snd = init_block(&dummy2, 33);
+    block_t *thd = init_block(&dummy3, 48);
 
     // Prepend the first block and remove it again
 
