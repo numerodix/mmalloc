@@ -72,6 +72,7 @@ class Generator:
 
     def get_cfiles(self, location):
         names = os.listdir(location)
+        names.sort()
         cfiles = [CFile(location, name) for name in names]
         return cfiles
 
