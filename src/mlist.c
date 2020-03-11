@@ -68,6 +68,11 @@ void append_to_list(block_t **plist_head, block_t *block) {
     }
 }
 
+void prepend_to_list(block_t **plist_head, block_t *block) {
+    block->next_block = *plist_head;
+    *plist_head = block;
+}
+
 int remove_from_list(block_t **plist_head, block_t *block) {
     block_t *current = get_list_head(plist_head);
 
