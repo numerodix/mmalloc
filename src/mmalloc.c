@@ -30,7 +30,7 @@ void *mmalloc(size_t size) {
     block_t *block = POP_FROM_FREE_LIST(size);
     if (block) {
         // add it to the used list
-        APPEND_TO_USED_LIST(block);
+        PREPEND_TO_USED_LIST(block);
 
         // exit critical section: release lock
         assert(0 == pthread_mutex_unlock(&lock));
@@ -65,7 +65,7 @@ void *mmalloc(size_t size) {
 
     // create a block and add it to the used list
     block = init_block(ptr_aligned, size_aligned, NULL);
-    APPEND_TO_USED_LIST(block);
+    PREPEND_TO_USED_LIST(block);
 
     // exit critical section: release lock
     assert(0 == pthread_mutex_unlock(&lock));
@@ -114,7 +114,7 @@ void *mrealloc(void *ptr, size_t size) {
     // is the block big enough to satisfy this new request?
     if (size <= block_existing->size) {
         // re-add to the used list
-        APPEND_TO_USED_LIST(block_existing);
+        PREPEND_TO_USED_LIST(block_existing);
 
         // exit critical section: release lock
         assert(0 == pthread_mutex_unlock(&lock));
@@ -123,8 +123,8 @@ void *mrealloc(void *ptr, size_t size) {
         return ptr;
     }
 
-    // it's too small: append it to the free list
-    APPEND_TO_FREE_LIST(block_existing);
+    // it's too small: prepend it to the free list
+    PREPEND_TO_FREE_LIST(block_existing);
 
     // read from the block before we exit the critical section
     size_t existing_size = block_existing->size;
@@ -161,8 +161,8 @@ void mfree(void *ptr) {
     int res = REMOVE_FROM_USED_LIST(block);
     assert(res == 0);
 
-    // append it to the free list
-    APPEND_TO_FREE_LIST(block);
+    // prepend it to the free list
+    PREPEND_TO_FREE_LIST(block);
 
     // exit critical section: release lock
     assert(0 == pthread_mutex_unlock(&lock));
