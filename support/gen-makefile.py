@@ -15,7 +15,7 @@ CFLAGS = [
     '-pthread',
 ]
 
-SOFLAGS = [
+SOFLAGS_PUBLIC = [
     '-shared',
     '-fPIC',
     '-fvisibility=hidden',
@@ -23,12 +23,18 @@ SOFLAGS = [
     '-DTRACE',
 ]
 
+SOFLAGS_PRIVATE = [
+    '-shared',
+    '-fPIC',
+]
+
 BINARIES_LOCATION = 'bin'
 HEADERS_LOCATION = 'include'
 SOURCES_LOCATION = 'src'
 TESTS_LOCATION = 'tests'
 
-SHARED_LIB_NAME = os.path.join(BINARIES_LOCATION, 'mmalloc.so')
+PUBLIC_SHARED_LIB_NAME = os.path.join(BINARIES_LOCATION, 'libmalloc.so')
+PRIVATE_SHARED_LIB_NAME = os.path.join(BINARIES_LOCATION, 'libmmalloc.so')
 
 
 class CFile:
@@ -50,6 +56,12 @@ class Target:
     def __init__(self, name, block):
         self.name = name
         self.block = block
+
+    @property
+    def linking_name(self):
+        filename = os.path.basename(self.name)
+        name, _ = os.path.splitext(filename)
+        return name.replace('lib', '')
 
 
 class Generator:
@@ -82,43 +94,50 @@ class Generator:
 
     def generate_constants(self):
         cflags = ' '.join(CFLAGS)
-        soflags = ' '.join(SOFLAGS)
+        soflags_public = ' '.join(SOFLAGS_PUBLIC)
+        soflags_private = ' '.join(SOFLAGS_PRIVATE)
         lines = [
             'CC := %s' % COMPILER,
             'CFLAGS := %s' % cflags,
-            'SOFLAGS := %s' % soflags,
+            'SOFLAGS_PUBLIC := %s' % soflags_public,
+            'SOFLAGS_PRIVATE := %s' % soflags_private,
         ]
         return self.to_block(lines)
 
-    def generate_test_target(self, testfile, sources, headers):
+    def generate_test_target(self, testfile, sources, headers, shared_libs):
         target = testfile.as_binary
 
-        dep_files = [testfile] + sources + headers
-        deps = ' '.join([dep.filepath for dep in dep_files])
-        inputs = ' '.join([source.filepath for source in sources])
+        dep_files = [testfile.filepath] + [lib.name for lib in shared_libs]
+        deps = ' '.join(dep_files)
+        libs = ' '.join(['-l%s' % lib.linking_name for lib in shared_libs])
 
         block = (
             '%(target)s: %(deps)s\n'
             '\t@mkdir -p %(binaries_loc)s\n'
-            '\t$(CC) $(CFLAGS) -I %(header_loc)s -o $@ %(source)s %(inputs)s'
+            '\t$(CC) $(CFLAGS) '
+            '-I %(header_loc)s '
+            '-Wl,-rpath=`pwd`/%(binaries_loc)s '
+            '-L %(binaries_loc)s '
+            '-o $@ %(source)s '
+            '%(libs)s'
         ) % dict(
             target=target,
             deps=deps,
             binaries_loc=BINARIES_LOCATION,
             header_loc=HEADERS_LOCATION,
             source=testfile.filepath,
-            inputs=inputs,
+            libs=libs,
         )
 
         return Target(name=target, block=block)
 
-    def generate_test_targets(self):
+    def generate_test_targets(self, shared_libs):
         headers = self.get_header_files()
         sources = self.get_source_files()
         tests = self.get_test_files()
 
         targets = [
-            self.generate_test_target(testfile, sources, headers)
+            self.generate_test_target(testfile, sources, headers, shared_libs)
             for testfile in tests
         ]
         targets.sort(key=lambda target: target.name)
@@ -129,25 +148,39 @@ class Generator:
         headers = self.get_header_files()
         sources = self.get_source_files()
 
-        target = SHARED_LIB_NAME
         dep_files = sources + headers
         deps = ' '.join([dep.filepath for dep in dep_files])
         inputs = ' '.join([source.filepath for source in sources])
 
+        public_name = PUBLIC_SHARED_LIB_NAME
         block = (
             '%(target)s: %(deps)s\n'
             '\t@mkdir -p %(binaries_loc)s\n'
-            '\t$(CC) $(CFLAGS) $(SOFLAGS) -I %(header_loc)s -o $@ %(inputs)s'
+            '\t$(CC) $(CFLAGS) $(SOFLAGS_PUBLIC) -I %(header_loc)s -o $@ %(inputs)s'
         ) % dict(
-            target=target,
+            target=public_name,
             deps=deps,
             binaries_loc=BINARIES_LOCATION,
             header_loc=HEADERS_LOCATION,
             inputs=inputs,
         )
+        public_target = Target(name=public_name, block=block)
 
-        target = Target(name=target, block=block)
-        return [target]
+        private_name = PRIVATE_SHARED_LIB_NAME
+        block = (
+            '%(target)s: %(deps)s\n'
+            '\t@mkdir -p %(binaries_loc)s\n'
+            '\t$(CC) $(CFLAGS) $(SOFLAGS_PRIVATE) -I %(header_loc)s -o $@ %(inputs)s'
+        ) % dict(
+            target=private_name,
+            deps=deps,
+            binaries_loc=BINARIES_LOCATION,
+            header_loc=HEADERS_LOCATION,
+            inputs=inputs,
+        )
+        private_target = Target(name=private_name, block=block)
+
+        return [public_target, private_target]
 
     def generate_group_targets(self, test_targets, shared_lib_targets):
         build_tests_name = 'build-tests'
@@ -209,21 +242,22 @@ class Generator:
     def generate_file(self):
         constants_block = self.generate_constants()
 
-        test_targets = self.generate_test_targets()
-        test_targets_block = self.to_block(
-            [target.block for target in test_targets],
-            sep=2
-        )
-
         shared_lib_targets = self.generate_shared_lib_targets()
+        [public_shared_lib_target, private_shared_lib_target] = shared_lib_targets
         shared_lib_targets_block = self.to_block(
             [target.block for target in shared_lib_targets],
             sep=2
         )
 
+        test_targets = self.generate_test_targets([private_shared_lib_target])
+        test_targets_block = self.to_block(
+            [target.block for target in test_targets],
+            sep=2
+        )
+
         group_targets = self.generate_group_targets(
             test_targets,
-            shared_lib_targets,
+            [public_shared_lib_target],
         )
         group_targets_block = self.to_block(
             [target.block for target in group_targets],
@@ -235,8 +269,8 @@ class Generator:
         blocks = [
             phony_block,
             constants_block,
-            test_targets_block,
             shared_lib_targets_block,
+            test_targets_block,
             group_targets_block,
         ]
 

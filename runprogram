@@ -8,6 +8,6 @@ make build-shared-libraries
 ulimit -c unlimited  # allow core file to be written
 rm -f core  # remove previous if any
 
-export LD_PRELOAD=`pwd`/bin/mmalloc.so
+export LD_PRELOAD=`pwd`/bin/libmalloc.so
 
 $@
