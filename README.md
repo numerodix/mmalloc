@@ -23,7 +23,7 @@ Most obvious shortcomings:
   with no effort to find one that is optimal size for the request.
 
 The implementation is functional enough to run both single threaded and multi
-threaded programs with it, eg. ls, ps, cat, hostname, uname, javac:
+threaded programs with it, eg. ls, ps, cat, hostname, uname, javac, vim:
 
 ```
 $ ./runprogram ls
