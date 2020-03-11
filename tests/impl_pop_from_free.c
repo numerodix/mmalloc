@@ -12,27 +12,27 @@ int main() {
     // The variables we'll use for testing
     block_t *block;
 
-    block_t *fst = init_block(&dummy1, 27, NULL);
+    block_t *fst = init_block(&dummy1, 48, NULL);
     block_t *snd = init_block(&dummy2, 33, NULL);
-    block_t *thd = init_block(&dummy3, 48, NULL);
+    block_t *thd = init_block(&dummy3, 25, NULL);
 
-    // Append the first block and pop it again
+    // Prepend the first block and pop it again
 
-    APPEND_TO_FREE_LIST(fst);
+    PREPEND_TO_FREE_LIST(fst);
 
-    block = POP_FROM_FREE_LIST(28);  // too big
+    block = POP_FROM_FREE_LIST(50);  // too big
     assert(block == NULL);
 
-    block = POP_FROM_FREE_LIST(26);
+    block = POP_FROM_FREE_LIST(46);
     assert(block == fst);
 
     block = GET_FREE_LIST_HEAD();
     assert(block == NULL);
 
-    // Append the first and second - pop the second
+    // Prepend the first and second - pop the second
 
-    APPEND_TO_FREE_LIST(fst);
-    APPEND_TO_FREE_LIST(snd);
+    PREPEND_TO_FREE_LIST(fst);
+    PREPEND_TO_FREE_LIST(snd);
 
     block = POP_FROM_FREE_LIST(28);
     assert(block == snd);
@@ -46,12 +46,12 @@ int main() {
     block = GET_FREE_LIST_HEAD();
     assert(block == NULL);
 
-    // Append the first and second - pop the first
+    // Prepend the first and second - pop the second
 
-    APPEND_TO_FREE_LIST(fst);
-    APPEND_TO_FREE_LIST(snd);
+    PREPEND_TO_FREE_LIST(fst);
+    PREPEND_TO_FREE_LIST(snd);
 
-    block = POP_FROM_FREE_LIST(25);
+    block = POP_FROM_FREE_LIST(35);
     assert(block == fst);
 
     block = GET_FREE_LIST_HEAD();
@@ -63,22 +63,22 @@ int main() {
     block = GET_FREE_LIST_HEAD();
     assert(block == NULL);
 
-    // Append all three - remove the second
+    // Prepend all three - remove the second
 
-    APPEND_TO_FREE_LIST(fst);
-    APPEND_TO_FREE_LIST(snd);
-    APPEND_TO_FREE_LIST(thd);
+    PREPEND_TO_FREE_LIST(fst);
+    PREPEND_TO_FREE_LIST(snd);
+    PREPEND_TO_FREE_LIST(thd);
 
     block = POP_FROM_FREE_LIST(30);
     assert(block == snd);
 
     block = GET_FREE_LIST_HEAD();
-    assert(block == fst);
-
-    block = GET_FREE_LIST_TAIL();
     assert(block == thd);
 
-    assert(fst->next_block->size == thd->size);
+    block = GET_FREE_LIST_TAIL();
+    assert(block == fst);
+
+    assert(thd->next_block->size == fst->size);
 
     return 0;
 }

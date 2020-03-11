@@ -17,26 +17,9 @@ int main() {
     block_t *snd = init_block(&dummy2, 33, NULL);
     block_t *thd = init_block(&dummy3, 48, NULL);
 
-    // Append the first block and remove it again
+    // Prepend the first block and remove it again
 
-    APPEND_TO_USED_LIST(fst);
-
-    res = REMOVE_FROM_USED_LIST(fst);
-    assert(res == 0);
-
-    block = GET_USED_LIST_HEAD();
-    assert(block == NULL);
-
-    // Append the first and second - remove the second
-
-    APPEND_TO_USED_LIST(fst);
-    APPEND_TO_USED_LIST(snd);
-
-    res = REMOVE_FROM_USED_LIST(snd);
-    assert(res == 0);
-
-    block = GET_USED_LIST_HEAD();
-    assert(block == fst);
+    PREPEND_TO_USED_LIST(fst);
 
     res = REMOVE_FROM_USED_LIST(fst);
     assert(res == 0);
@@ -44,10 +27,10 @@ int main() {
     block = GET_USED_LIST_HEAD();
     assert(block == NULL);
 
-    // Append the first and second - remove the first
+    // Prepend the first and second - remove the first
 
-    APPEND_TO_USED_LIST(fst);
-    APPEND_TO_USED_LIST(snd);
+    PREPEND_TO_USED_LIST(fst);
+    PREPEND_TO_USED_LIST(snd);
 
     res = REMOVE_FROM_USED_LIST(fst);
     assert(res == 0);
@@ -61,11 +44,10 @@ int main() {
     block = GET_USED_LIST_HEAD();
     assert(block == NULL);
 
-    // Append all three - remove the second
+    // Prepend the first and second - remove the second
 
-    APPEND_TO_USED_LIST(fst);
-    APPEND_TO_USED_LIST(snd);
-    APPEND_TO_USED_LIST(thd);
+    PREPEND_TO_USED_LIST(fst);
+    PREPEND_TO_USED_LIST(snd);
 
     res = REMOVE_FROM_USED_LIST(snd);
     assert(res == 0);
@@ -73,10 +55,28 @@ int main() {
     block = GET_USED_LIST_HEAD();
     assert(block == fst);
 
-    block = GET_USED_LIST_TAIL();
+    res = REMOVE_FROM_USED_LIST(fst);
+    assert(res == 0);
+
+    block = GET_USED_LIST_HEAD();
+    assert(block == NULL);
+
+    // Prepend all three - remove the second
+
+    PREPEND_TO_USED_LIST(fst);
+    PREPEND_TO_USED_LIST(snd);
+    PREPEND_TO_USED_LIST(thd);
+
+    res = REMOVE_FROM_USED_LIST(snd);
+    assert(res == 0);
+
+    block = GET_USED_LIST_HEAD();
     assert(block == thd);
 
-    assert(fst->next_block->size == thd->size);
+    block = GET_USED_LIST_TAIL();
+    assert(block == fst);
+
+    assert(thd->next_block->size == fst->size);
 
     return 0;
 }
