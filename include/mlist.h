@@ -35,9 +35,6 @@ block_t *get_list_head(block_t **plist_head);
 // Returns a pointer to the block at the tail of the list
 block_t *get_list_tail(block_t **plist_head);
 
-// Appends the block to the tail of the list
-void append_to_list(block_t **plist_head, block_t *block);
-
 // Prepends the block to the head of the list
 void prepend_to_list(block_t **plist_head, block_t *block);
 
@@ -51,12 +48,10 @@ block_t *pop_from_list(block_t **plist_head, size_t min_size);
 
 #define GET_USED_LIST_HEAD() get_list_head(get_used_list_ptr())
 #define GET_USED_LIST_TAIL() get_list_tail(get_used_list_ptr())
-#define APPEND_TO_USED_LIST(block) append_to_list(get_used_list_ptr(), block)
 #define PREPEND_TO_USED_LIST(block) prepend_to_list(get_used_list_ptr(), block)
 #define REMOVE_FROM_USED_LIST(block) remove_from_list(get_used_list_ptr(), block)
 
 #define GET_FREE_LIST_HEAD() get_list_head(get_free_list_ptr())
 #define GET_FREE_LIST_TAIL() get_list_tail(get_free_list_ptr())
-#define APPEND_TO_FREE_LIST(block) append_to_list(get_free_list_ptr(), block)
 #define PREPEND_TO_FREE_LIST(block) prepend_to_list(get_free_list_ptr(), block)
 #define POP_FROM_FREE_LIST(min_size) pop_from_list(get_free_list_ptr(), min_size)

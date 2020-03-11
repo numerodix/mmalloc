@@ -58,16 +58,6 @@ block_t *get_list_tail(block_t **plist_head) {
     return current;
 }
 
-void append_to_list(block_t **plist_head, block_t *block) {
-    block_t *last = get_list_tail(plist_head);
-
-    if (last) {
-        last->next_block = block;
-    } else {
-        *plist_head = block;
-    }
-}
-
 void prepend_to_list(block_t **plist_head, block_t *block) {
     block->next_block = *plist_head;
     *plist_head = block;
