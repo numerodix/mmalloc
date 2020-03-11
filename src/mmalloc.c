@@ -6,6 +6,7 @@
 #include "malign.h"
 #include "mlist.h"
 #include "mmalloc.h"
+#include "mtrace.h"
 
 
 // For some reason accessing memory right at the end of the heap seems
@@ -171,48 +172,6 @@ void mfree(void *ptr) {
 
 
 #ifdef EXPORT_REAL_API
-#ifdef TRACE
-enum Function { F_MALLOC, F_CALLOC, F_REALLOC, F_FREE };
-
-void print_trace(int func_id, size_t size) {
-    // Low level output of the allocation size. Have to use `write` since:
-    // - printf uses malloc
-    // - even putchar interferes with some programs
-
-    // 29 chars + \0
-    char buf[30] = "                            \n";
-    char ascii_code_zero = 48;
-
-    switch (func_id) {
-        case F_MALLOC:
-            memcpy(buf, "malloc:", 7);
-            break;
-        case F_CALLOC:
-            memcpy(buf, "calloc:", 7);
-            break;
-        case F_REALLOC:
-            memcpy(buf, "realloc:", 8);
-            break;
-        case F_FREE:
-            memcpy(buf, "free:", 5);
-            break;
-    }
-
-    if (size > 0) {
-        int pos = sizeof(buf) - 3;
-        while (size >= 10) {
-            char digit = size % 10;
-            buf[pos--] = ascii_code_zero + digit;
-            size = size / 10;
-        }
-        buf[pos] = ascii_code_zero + size;
-    }
-
-    // write to stderr
-    write(2, buf, sizeof(buf));
-}
-#endif  // TRACE
-
 void *malloc(size_t size) {
 #ifdef TRACE
     print_trace(F_MALLOC, size);
