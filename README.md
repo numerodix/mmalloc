@@ -1,6 +1,6 @@
 # Adventures in writing a malloc
 
-A simple malloc implementation that uses two singly linked lists:
+A simple malloc implementation that uses two doubly linked lists:
 
 - A used list that stores all blocks currently in use.
 - A free list that stores blocks previously allocated and then free'd.
