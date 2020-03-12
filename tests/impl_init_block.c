@@ -13,8 +13,9 @@ int main() {
     block_t *block = init_block(&dummy, 7);
 
     // check that it was constructed correctly
-    assert(block->size == 7);
+    assert(block->prev_block == NULL);
     assert(block->next_block == NULL);
+    assert(block->size == 7);
 
     // check that the block data pointer points just past the block header
     void *dptr = get_block_data_pointer(block);

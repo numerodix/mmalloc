@@ -7,8 +7,10 @@
 // of memory that malloc returns.
 // Successive allocations return blocks that participate in a linked list.
 struct _block {
-    size_t size;
+    struct _block* prev_block;
     struct _block* next_block;
+    size_t size;
+    size_t _padding;  // to make the block aligned on 16 bytes
 };
 typedef struct _block block_t;
 

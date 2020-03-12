@@ -14,8 +14,9 @@ block_t *FREE_BLOCKS = NULL;
 block_t *init_block(void *ptr, size_t size) {
     block_t *block = (block_t *) ptr;
 
-    block->size = size;
+    block->prev_block = NULL;
     block->next_block = NULL;
+    block->size = size;
 
     return block;
 }
