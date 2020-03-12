@@ -50,11 +50,8 @@ void *mmalloc(size_t size) {
         ptr_aligned = (void *) (((size_t) ptr_aligned) + ALIGNMENT);
     }
 
-    // align the size too
-    size_t size_aligned = align_location(size, ALIGNMENT);
-    if (size_aligned < size) {
-        size_aligned += ALIGNMENT;
-    }
+    // round up the size to a standard size
+    size_t size_aligned = get_standard_size(size);
 
     // compute new break
     size_t needed_size = sizeof(block_t) + size_aligned;
