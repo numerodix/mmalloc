@@ -12,13 +12,13 @@ of the heap to create a new block.
 No blocks from the free list are ever released back to the OS. The heap only
 grows, never shrinks.
 
-Allocations are aligned at 16 byte boundaries.
-
-A mutex is used to ensure exclusive access to shared data structures.
+Features:
+- Allocations are aligned at 16 byte boundaries.
+- Blocks are sized by rounding up the size requested to the next power of 2,
+  in order to make the blocks more reusable.
+- A mutex is used to ensure exclusive access to shared data structures.
 
 Most obvious shortcomings:
-- Blocks are sized according to the size requested instead of using more
-  reusable powers-of-2 sizes.
 - When picking a block from the free list the first block big enough is chosen,
   with no effort to find one that is optimal size for the request.
 
