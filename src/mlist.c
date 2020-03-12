@@ -60,7 +60,15 @@ block_t *get_list_tail(block_t **plist_head) {
 }
 
 void prepend_to_list(block_t **plist_head, block_t *block) {
-    block->next_block = *plist_head;
+    block_t *prev_head = *plist_head;
+
+    if (!prev_head) {
+        *plist_head = block;
+        return;
+    }
+
+    prev_head->prev_block = block;
+    block->next_block = prev_head;
     *plist_head = block;
 }
 

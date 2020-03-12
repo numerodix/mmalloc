@@ -57,7 +57,11 @@ int main() {
     // We can follow the links between the blocks
 
     assert(thd->next_block->size == snd->size);
+    assert(snd->prev_block->size == thd->size);
+
     assert(snd->next_block->size == fst->size);
+    assert(fst->prev_block->size == snd->size);
+
     assert(fst->next_block == NULL);
 
     return 0;
