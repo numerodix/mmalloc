@@ -12,3 +12,6 @@ bool is_aligned(size_t location, size_t alignment);
 
 // Returns the next power of 2 up from `num`
 size_t next_power_of_2(size_t num);
+
+// Returns a standard size large enough to contain `num`
+size_t get_standard_size(size_t num);
