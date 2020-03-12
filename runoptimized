@@ -2,7 +2,7 @@
 
 set -eux
 
-SO_NAME=bin/libmalloc.so
+SO_NAME=bin/libmalloc-opt.so
 
 support/gen-makefile.py
 make ${SO_NAME}
@@ -12,4 +12,4 @@ rm -f core  # remove previous if any
 
 export LD_PRELOAD=`pwd`/${SO_NAME}
 
-$@
+time $@

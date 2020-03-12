@@ -23,6 +23,17 @@ SOFLAGS_PUBLIC = [
     '-DTRACE',
 ]
 
+SOFLAGS_PUBLIC_OPT = [
+    '-shared',
+    '-fPIC',
+    '-fvisibility=hidden',
+    '-DEXPORT_REAL_API',
+
+    # necessary because -O3 generates a warning no other compilation target does
+    '-Wno-unused-result',
+    '-O3',
+]
+
 SOFLAGS_PRIVATE = [
     '-shared',
     '-fPIC',
@@ -34,6 +45,7 @@ SOURCES_LOCATION = 'src'
 TESTS_LOCATION = 'tests'
 
 PUBLIC_SHARED_LIB_NAME = os.path.join(BINARIES_LOCATION, 'libmalloc.so')
+PUBLIC_OPT_SHARED_LIB_NAME = os.path.join(BINARIES_LOCATION, 'libmalloc-opt.so')
 PRIVATE_SHARED_LIB_NAME = os.path.join(BINARIES_LOCATION, 'libmmalloc.so')
 
 
@@ -96,11 +108,13 @@ class Generator:
     def generate_constants(self):
         cflags = ' '.join(CFLAGS)
         soflags_public = ' '.join(SOFLAGS_PUBLIC)
+        soflags_public_opt = ' '.join(SOFLAGS_PUBLIC_OPT)
         soflags_private = ' '.join(SOFLAGS_PRIVATE)
         lines = [
             'CC := %s' % COMPILER,
             'CFLAGS := %s' % cflags,
             'SOFLAGS_PUBLIC := %s' % soflags_public,
+            'SOFLAGS_PUBLIC_OPT := %s' % soflags_public_opt,
             'SOFLAGS_PRIVATE := %s' % soflags_private,
         ]
         return self.to_block(lines)
@@ -167,6 +181,20 @@ class Generator:
         )
         public_target = Target(name=public_name, block=block)
 
+        public_opt_name = PUBLIC_OPT_SHARED_LIB_NAME
+        block = (
+            '%(target)s: %(deps)s\n'
+            '\t@mkdir -p %(binaries_loc)s\n'
+            '\t$(CC) $(CFLAGS) $(SOFLAGS_PUBLIC_OPT) -I %(header_loc)s -o $@ %(inputs)s'
+        ) % dict(
+            target=public_opt_name,
+            deps=deps,
+            binaries_loc=BINARIES_LOCATION,
+            header_loc=HEADERS_LOCATION,
+            inputs=inputs,
+        )
+        public_opt_target = Target(name=public_opt_name, block=block)
+
         private_name = PRIVATE_SHARED_LIB_NAME
         block = (
             '%(target)s: %(deps)s\n'
@@ -181,7 +209,7 @@ class Generator:
         )
         private_target = Target(name=private_name, block=block)
 
-        return [public_target, private_target]
+        return [public_target, public_opt_target, private_target]
 
     def generate_group_targets(self, test_targets, shared_lib_targets):
         build_tests_name = 'build-tests'
@@ -244,7 +272,11 @@ class Generator:
         constants_block = self.generate_constants()
 
         shared_lib_targets = self.generate_shared_lib_targets()
-        [public_shared_lib_target, private_shared_lib_target] = shared_lib_targets
+        [
+            public_shared_lib_target,
+            public_opt_shared_lib_target,
+            private_shared_lib_target,
+        ] = shared_lib_targets
         shared_lib_targets_block = self.to_block(
             [target.block for target in shared_lib_targets],
             sep=2
@@ -258,7 +290,7 @@ class Generator:
 
         group_targets = self.generate_group_targets(
             test_targets,
-            [public_shared_lib_target],
+            [public_shared_lib_target, public_opt_shared_lib_target],
         )
         group_targets_block = self.to_block(
             [target.block for target in group_targets],
