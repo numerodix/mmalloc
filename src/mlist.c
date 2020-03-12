@@ -75,10 +75,10 @@ void prepend_to_list(block_t **plist_head, block_t *block) {
 int remove_from_list(block_t **plist_head, block_t *block) {
     block_t *current_head = get_list_head(plist_head);
 
-    // if `block` is in the list then it has at least at least:
+    // if `block` is in the list then it has at least:
     // - a next_block, or
     // - a prev_block, or
-    // - it's equal to `current`
+    // - it's equal to `current_head`
     if ((!block->prev_block) && (!block->next_block) && (block != current_head)) {
         return -1;
     }
