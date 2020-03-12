@@ -26,6 +26,9 @@ int main() {
     block = POP_FROM_FREE_LIST(46);
     assert(block == fst);
 
+    block = POP_FROM_FREE_LIST(46);  // list was empty
+    assert(block == NULL);
+
     block = GET_FREE_LIST_HEAD();
     assert(block == NULL);
 
@@ -37,8 +40,14 @@ int main() {
     block = POP_FROM_FREE_LIST(28);
     assert(block == snd);
 
+    assert(snd->prev_block == NULL);
+    assert(snd->next_block == NULL);
+
     block = GET_FREE_LIST_HEAD();
     assert(block == fst);
+
+    assert(fst->prev_block == NULL);
+    assert(fst->next_block == NULL);
 
     block = POP_FROM_FREE_LIST(0);
     assert(block == fst);
@@ -54,8 +63,14 @@ int main() {
     block = POP_FROM_FREE_LIST(35);
     assert(block == fst);
 
+    assert(fst->prev_block == NULL);
+    assert(fst->next_block == NULL);
+
     block = GET_FREE_LIST_HEAD();
     assert(block == snd);
+
+    assert(snd->prev_block == NULL);
+    assert(snd->next_block == NULL);
 
     block = POP_FROM_FREE_LIST(0);
     assert(block == snd);
@@ -72,13 +87,21 @@ int main() {
     block = POP_FROM_FREE_LIST(30);
     assert(block == snd);
 
+    assert(snd->prev_block == NULL);
+    assert(snd->next_block == NULL);
+
     block = GET_FREE_LIST_HEAD();
     assert(block == thd);
 
     block = GET_FREE_LIST_TAIL();
     assert(block == fst);
 
+    assert(thd->prev_block == NULL);
+
     assert(thd->next_block->size == fst->size);
+    assert(fst->prev_block->size == thd->size);
+
+    assert(fst->next_block == NULL);
 
     return 0;
 }

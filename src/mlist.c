@@ -111,19 +111,34 @@ block_t *pop_from_list(block_t **plist_head, size_t min_size) {
     }
 
     if (current->size >= min_size) {
-        *plist_head = current->next_block;
+        block_t *after = current->next_block;
+
+        current->prev_block = NULL;
         current->next_block = NULL;
+
+        if (after) {
+            after->prev_block = NULL;
+        }
+
+        *plist_head = after;
         return current;
     }
 
-    block_t *previous;
     while (current->next_block) {
-        previous = current;
+        block_t *before = current;
         current = current->next_block;
 
         if (current->size >= min_size) {
-            previous->next_block = current->next_block;
+            block_t *after = current->next_block;
+
+            current->prev_block = NULL;
             current->next_block = NULL;
+
+            before->next_block = after;
+            if (after) {
+                after->prev_block = before;
+            }
+
             return current;
         }
     }
