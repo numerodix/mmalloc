@@ -14,7 +14,7 @@
 #define PADDING (1 << 10)
 
 // System malloc seems to always return addresses that are aligned to 16 bytes.
-// The size of `block_t` is also 16 bytes so if we align the pointer and add
+// The size of `block_t` is 32 bytes so if we align the pointer and add
 // the offset needed for `block_t` we'll have the same end result.
 #define ALIGNMENT 16
 
@@ -57,7 +57,7 @@ void *mmalloc(size_t size) {
     }
 
     // compute new break
-    size_t needed_size = size_aligned + sizeof(block_t);
+    size_t needed_size = sizeof(block_t) + size_aligned;
     void *ptr_new = (void *) (((size_t) ptr_aligned) + needed_size + PADDING);
 
     // set the new break
