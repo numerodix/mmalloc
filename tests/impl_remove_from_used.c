@@ -17,6 +17,11 @@ int main() {
     block_t *snd = init_block(&dummy2, 33);
     block_t *thd = init_block(&dummy3, 48);
 
+    // Cannot remove from an empty list
+
+    res = REMOVE_FROM_USED_LIST(fst);
+    assert(res == -1);
+
     // Prepend the first block and remove it again
 
     PREPEND_TO_USED_LIST(fst);
@@ -35,8 +40,18 @@ int main() {
     res = REMOVE_FROM_USED_LIST(fst);
     assert(res == 0);
 
+    // cannot remove a second time
+    res = REMOVE_FROM_USED_LIST(fst);
+    assert(res == -1);
+
+    assert(fst->prev_block == NULL);
+    assert(fst->next_block == NULL);
+
     block = GET_USED_LIST_HEAD();
     assert(block == snd);
+
+    assert(snd->prev_block == NULL);
+    assert(snd->next_block == NULL);
 
     res = REMOVE_FROM_USED_LIST(snd);
     assert(res == 0);
@@ -52,8 +67,18 @@ int main() {
     res = REMOVE_FROM_USED_LIST(snd);
     assert(res == 0);
 
+    // cannot remove a second time
+    res = REMOVE_FROM_USED_LIST(snd);
+    assert(res == -1);
+
+    assert(snd->prev_block == NULL);
+    assert(snd->next_block == NULL);
+
     block = GET_USED_LIST_HEAD();
     assert(block == fst);
+
+    assert(fst->prev_block == NULL);
+    assert(fst->next_block == NULL);
 
     res = REMOVE_FROM_USED_LIST(fst);
     assert(res == 0);
@@ -70,13 +95,25 @@ int main() {
     res = REMOVE_FROM_USED_LIST(snd);
     assert(res == 0);
 
+    // cannot remove a second time
+    res = REMOVE_FROM_USED_LIST(snd);
+    assert(res == -1);
+
+    assert(snd->prev_block == NULL);
+    assert(snd->next_block == NULL);
+
     block = GET_USED_LIST_HEAD();
     assert(block == thd);
 
     block = GET_USED_LIST_TAIL();
     assert(block == fst);
 
+    assert(thd->prev_block == NULL);
+
     assert(thd->next_block->size == fst->size);
+    assert(fst->prev_block->size == thd->size);
+
+    assert(fst->next_block == NULL);
 
     return 0;
 }

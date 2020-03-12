@@ -73,31 +73,34 @@ void prepend_to_list(block_t **plist_head, block_t *block) {
 }
 
 int remove_from_list(block_t **plist_head, block_t *block) {
-    block_t *current = get_list_head(plist_head);
+    block_t *current_head = get_list_head(plist_head);
 
-    if (!current) {
+    // if `block` is in the list then it has at least at least:
+    // - a next_block, or
+    // - a prev_block, or
+    // - it's equal to `current`
+    if ((!block->prev_block) && (!block->next_block) && (block != current_head)) {
         return -1;
     }
 
-    if (current == block) {
-        *plist_head = current->next_block;
-        current->next_block = NULL;
-        return 0;
+    block_t *before = block->prev_block;
+    block_t *after = block->next_block;
+
+    block->prev_block = NULL;
+    block->next_block = NULL;
+
+    if (before) {
+        before->next_block = after;
+    }
+    if (after) {
+        after->prev_block = before;
     }
 
-    block_t *previous;
-    while (current->next_block) {
-        previous = current;
-        current = current->next_block;
-
-        if (current == block) {
-            previous->next_block = current->next_block;
-            current->next_block = NULL;
-            return 0;
-        }
+    if (block == current_head) {
+        *plist_head = after;
     }
 
-    return -1;
+    return 0;
 }
 
 block_t *pop_from_list(block_t **plist_head, size_t min_size) {

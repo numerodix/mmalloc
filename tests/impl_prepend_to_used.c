@@ -44,6 +44,13 @@ int main() {
     block = GET_USED_LIST_TAIL();
     assert(block == fst);
 
+    assert(snd->prev_block == NULL);
+
+    assert(snd->next_block->size == fst->size);
+    assert(fst->prev_block->size == snd->size);
+
+    assert(fst->next_block == NULL);
+
     // After prepending the third block the head and tail are the third and first
 
     PREPEND_TO_USED_LIST(thd);
@@ -54,7 +61,7 @@ int main() {
     block = GET_USED_LIST_TAIL();
     assert(block == fst);
 
-    // We can follow the links between the blocks
+    assert(thd->prev_block == NULL);
 
     assert(thd->next_block->size == snd->size);
     assert(snd->prev_block->size == thd->size);
