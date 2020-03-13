@@ -1,4 +1,5 @@
 #include <limits.h>
+#include <stdint.h>
 
 #include "malign.h"
 
@@ -39,4 +40,15 @@ size_t get_standard_size(size_t num) {
     }
 
     return next_power_of_2(num);
+}
+
+
+size_t get_log2(size_t size) {
+    int counter = 0;
+
+    while (size >>= 1) {
+        counter++;
+    }
+
+    return counter;
 }
