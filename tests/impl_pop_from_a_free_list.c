@@ -13,9 +13,9 @@ int main() {
     // The variable we'll use for lookups
     block_t *block;
 
-    block_t *five = init_block(&dummy1, 0, 5);
-    block_t *seven = init_block(&dummy2, 0, 7);
-    block_t *sixty_three = init_block(&dummy3, 0, 63);
+    block_t *five = init_block(&dummy1, 5);
+    block_t *seven = init_block(&dummy2, 7);
+    block_t *sixty_three = init_block(&dummy3, 63);
 
     // cannot pop from an empty list
     block = pop_from_a_free_list(five->size_index);

@@ -9,14 +9,13 @@
 struct _block {
     struct _block* prev_block;
     struct _block* next_block;
-    size_t size;
     size_t size_index;
 };
 typedef struct _block block_t;
 
 
 // Constructs a block at location `ptr`.
-block_t *init_block(void *ptr, size_t size, size_t size_index);
+block_t *init_block(void *ptr, size_t size_index);
 
 // Returns a pointer to the data location of a block
 void *get_block_data_pointer(block_t* block);
@@ -45,10 +44,6 @@ int remove_from_list(block_t **plist_head, block_t *block);
 
 // Removes the head of the list and returns it
 block_t *pop_list_head(block_t **plist_head);
-
-// Finds the first block in the list whose size is at least `min_size`,
-// then removes it and returns it
-block_t *pop_from_list(block_t **plist_head, size_t min_size);
 
 
 #define GET_USED_LIST_HEAD() get_list_head(get_used_list_ptr())

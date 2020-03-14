@@ -16,12 +16,11 @@ block_t *FREE_BLOCKS_LIST_POINTERS[MAX_SIZE_INDEX + 1] = {NULL};
 
 // Operations on a single block
 
-block_t *init_block(void *ptr, size_t size, size_t size_index) {
+block_t *init_block(void *ptr, size_t size_index) {
     block_t *block = (block_t *) ptr;
 
     block->prev_block = NULL;
     block->next_block = NULL;
-    block->size = size;
     block->size_index = size_index;
 
     return block;
@@ -135,50 +134,6 @@ block_t *pop_list_head(block_t **plist_head) {
     *plist_head = after;
 
     return current_head;
-}
-
-
-block_t *pop_from_list(block_t **plist_head, size_t min_size) {
-    block_t *current = get_list_head(plist_head);
-
-    if (!current) {
-        return NULL;
-    }
-
-    if (current->size >= min_size) {
-        block_t *after = current->next_block;
-
-        current->prev_block = NULL;
-        current->next_block = NULL;
-
-        if (after) {
-            after->prev_block = NULL;
-        }
-
-        *plist_head = after;
-        return current;
-    }
-
-    while (current->next_block) {
-        block_t *before = current;
-        current = current->next_block;
-
-        if (current->size >= min_size) {
-            block_t *after = current->next_block;
-
-            current->prev_block = NULL;
-            current->next_block = NULL;
-
-            before->next_block = after;
-            if (after) {
-                after->prev_block = before;
-            }
-
-            return current;
-        }
-    }
-
-    return NULL;
 }
 
 

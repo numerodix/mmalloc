@@ -13,9 +13,9 @@ int main() {
     block_t *block;
     int res;
 
-    block_t *fst = init_block(&dummy1, 27, 0);
-    block_t *snd = init_block(&dummy2, 33, 0);
-    block_t *thd = init_block(&dummy3, 48, 0);
+    block_t *fst = init_block(&dummy1, 27);
+    block_t *snd = init_block(&dummy2, 33);
+    block_t *thd = init_block(&dummy3, 48);
 
     // Cannot remove from an empty list
 
@@ -110,8 +110,8 @@ int main() {
 
     assert(thd->prev_block == NULL);
 
-    assert(thd->next_block->size == fst->size);
-    assert(fst->prev_block->size == thd->size);
+    assert(thd->next_block->size_index == fst->size_index);
+    assert(fst->prev_block->size_index == thd->size_index);
 
     assert(fst->next_block == NULL);
 

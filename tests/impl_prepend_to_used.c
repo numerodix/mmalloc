@@ -12,9 +12,9 @@ int main() {
     // The variable we'll use for lookups
     block_t *block;
 
-    block_t *fst = init_block(&dummy1, 27, 0);
-    block_t *snd = init_block(&dummy2, 33, 0);
-    block_t *thd = init_block(&dummy3, 48, 0);
+    block_t *fst = init_block(&dummy1, 27);
+    block_t *snd = init_block(&dummy2, 33);
+    block_t *thd = init_block(&dummy3, 48);
 
     // Before prepending there are no used blocks
 
@@ -46,8 +46,8 @@ int main() {
 
     assert(snd->prev_block == NULL);
 
-    assert(snd->next_block->size == fst->size);
-    assert(fst->prev_block->size == snd->size);
+    assert(snd->next_block->size_index == fst->size_index);
+    assert(fst->prev_block->size_index == snd->size_index);
 
     assert(fst->next_block == NULL);
 
@@ -63,11 +63,11 @@ int main() {
 
     assert(thd->prev_block == NULL);
 
-    assert(thd->next_block->size == snd->size);
-    assert(snd->prev_block->size == thd->size);
+    assert(thd->next_block->size_index == snd->size_index);
+    assert(snd->prev_block->size_index == thd->size_index);
 
-    assert(snd->next_block->size == fst->size);
-    assert(fst->prev_block->size == snd->size);
+    assert(snd->next_block->size_index == fst->size_index);
+    assert(fst->prev_block->size_index == snd->size_index);
 
     assert(fst->next_block == NULL);
 

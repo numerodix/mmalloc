@@ -9,12 +9,11 @@ int main() {
     block_t dummy;
 
     // use the dummy memory to construct a block on top of it
-    block_t *block = init_block(&dummy, 7, 5);
+    block_t *block = init_block(&dummy, 5);
 
     // check that it was constructed correctly
     assert(block->prev_block == NULL);
     assert(block->next_block == NULL);
-    assert(block->size == 7);
     assert(block->size_index == 5);
 
     // check that the block data pointer points just past the block header
