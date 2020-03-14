@@ -43,6 +43,9 @@ void prepend_to_list(block_t **plist_head, block_t *block);
 // Removes the block from the list
 int remove_from_list(block_t **plist_head, block_t *block);
 
+// Removes the head of the list and returns it
+block_t *pop_list_head(block_t **plist_head);
+
 // Finds the first block in the list whose size is at least `min_size`,
 // then removes it and returns it
 block_t *pop_from_list(block_t **plist_head, size_t min_size);
@@ -59,7 +62,9 @@ block_t *pop_from_list(block_t **plist_head, size_t min_size);
 #define POP_FROM_FREE_LIST(min_size) pop_from_list(get_free_list_ptr(), min_size)
 
 
-block_t *pop_list_head(block_t **plist_head);
-
+// Prepends the block to the right free list, based on block->size_index
 void prepend_to_a_free_list(block_t *block);
+
+// Using the list identified by `size_index`, removes the head of the list
+// and returns it
 block_t *pop_from_a_free_list(size_t size_index);

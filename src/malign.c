@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <limits.h>
 #include <stdint.h>
 
@@ -59,10 +60,7 @@ size_t get_size_index(size_t exponent) {
         return MIN_SIZE_INDEX;
     }
 
-    if (exponent > MAX_SIZE_INDEX) {
-        return MAX_SIZE_INDEX;
-    }
-
+    assert(exponent <= MAX_SIZE_INDEX);
     return exponent;
 }
 

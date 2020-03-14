@@ -27,9 +27,11 @@ block_t *init_block(void *ptr, size_t size, size_t size_index) {
     return block;
 }
 
+
 void *get_block_data_pointer(block_t* block) {
     return block + sizeof(block_t);
 }
+
 
 block_t *as_block_pointer(void *ptr) {
     block_t *block = (block_t *) ptr;
@@ -39,17 +41,21 @@ block_t *as_block_pointer(void *ptr) {
 
 // List operations
 
+
 block_t **get_free_list_ptr() {
     return &FREE_BLOCKS;
 }
+
 
 block_t **get_used_list_ptr() {
     return &USED_BLOCKS;
 }
 
+
 block_t *get_list_head(block_t **plist_head) {
     return *plist_head;
 }
+
 
 block_t *get_list_tail(block_t **plist_head) {
     block_t *current = get_list_head(plist_head);
@@ -65,6 +71,7 @@ block_t *get_list_tail(block_t **plist_head) {
     return current;
 }
 
+
 void prepend_to_list(block_t **plist_head, block_t *block) {
     block_t *prev_head = *plist_head;
 
@@ -77,6 +84,7 @@ void prepend_to_list(block_t **plist_head, block_t *block) {
     block->next_block = prev_head;
     *plist_head = block;
 }
+
 
 int remove_from_list(block_t **plist_head, block_t *block) {
     block_t *current_head = get_list_head(plist_head);
@@ -108,6 +116,27 @@ int remove_from_list(block_t **plist_head, block_t *block) {
 
     return 0;
 }
+
+
+block_t *pop_list_head(block_t **plist_head) {
+    block_t *current_head = *plist_head;
+
+    if (!current_head) {
+        return NULL;
+    }
+
+    block_t *after = current_head->next_block;
+
+    current_head->next_block = NULL;
+
+    if (after) {
+        after->prev_block = NULL;
+    }
+    *plist_head = after;
+
+    return current_head;
+}
+
 
 block_t *pop_from_list(block_t **plist_head, size_t min_size) {
     block_t *current = get_list_head(plist_head);
@@ -150,25 +179,6 @@ block_t *pop_from_list(block_t **plist_head, size_t min_size) {
     }
 
     return NULL;
-}
-
-block_t *pop_list_head(block_t **plist_head) {
-    block_t *current_head = *plist_head;
-
-    if (!current_head) {
-        return NULL;
-    }
-
-    block_t *after = current_head->next_block;
-
-    current_head->next_block = NULL;
-
-    if (after) {
-        after->prev_block = NULL;
-    }
-    *plist_head = after;
-
-    return current_head;
 }
 
 

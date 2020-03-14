@@ -17,8 +17,6 @@ int main() {
 
     assert(get_size_index(62) == 62);
     assert(get_size_index(63) == 63);
-    assert(get_size_index(64) == 63);
-    assert(get_size_index(65) == 63);
 
     return 0;
 }
