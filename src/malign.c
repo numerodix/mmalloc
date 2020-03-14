@@ -19,7 +19,9 @@ bool is_aligned(size_t location, size_t alignment) {
 size_t get_base2_exponent(size_t size) {
     int counter = 0;
 
-    // TODO: this is so slow, could be 63 iterations
+    // this loop is unfortunate:
+    // for the common small allocations like 32 bytes it's a few loops
+    // for larger ones (32k - 1mb) it's 15-20 loops
     while (size >>= 1) {
         counter++;
     }
