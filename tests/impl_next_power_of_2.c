@@ -15,4 +15,6 @@ int main() {
     assert(next_power_of_2(33) == 64);
     assert(next_power_of_2(0x9ecd32e) == 0x10000000);
     assert(next_power_of_2(0x3ffe18f59bd7e2) == 0x40000000000000);
+
+    return 0;
 }

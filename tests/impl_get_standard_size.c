@@ -16,4 +16,6 @@ int main() {
     assert(get_standard_size(1025) == 2048);
     assert(get_standard_size(22460) == 0x8000);
     assert(get_standard_size(527423) == 0x100000);
+
+    return 0;
 }
