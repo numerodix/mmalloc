@@ -19,6 +19,7 @@ bool is_aligned(size_t location, size_t alignment) {
 size_t get_base2_exponent(size_t size) {
     int counter = 0;
 
+    // TODO: this is so slow, could be 63 iterations
     while (size >>= 1) {
         counter++;
     }
