@@ -56,9 +56,6 @@ block_t *pop_from_list(block_t **plist_head, size_t min_size);
 #define PREPEND_TO_USED_LIST(block) prepend_to_list(get_used_list_ptr(), block)
 #define REMOVE_FROM_USED_LIST(block) remove_from_list(get_used_list_ptr(), block)
 
-#define GET_FREE_LIST_HEAD() get_list_head(get_free_list_ptr())
-#define GET_FREE_LIST_TAIL() get_list_tail(get_free_list_ptr())
-
 
 // Prepends the block to the right free list, based on block->size_index
 void prepend_to_a_free_list(block_t *block);
