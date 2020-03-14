@@ -6,7 +6,14 @@
 
 // Pointers to the lists
 
+// A linked list of used blocks of any size.
 block_t *USED_BLOCKS = NULL;
+
+// An array of pointers. Each pointer points to the head of a linked
+// list where all the blocks are of identical size, according to
+// block->size_index.
+//
+// Array position 5 -> size_index == 5 -> blocks of size 2^5.
 block_t *FREE_BLOCKS_LIST_POINTERS[MAX_SIZE_INDEX + 1] = {NULL};
 
 
