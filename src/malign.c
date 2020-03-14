@@ -5,9 +5,6 @@
 #include "malign.h"
 
 
-#define MIN_STD_SIZE 1 << 5
-
-
 size_t align_location(size_t location, size_t alignment) {
     size_t mask = ULONG_MAX ^ (alignment - 1);
     return location & mask;
