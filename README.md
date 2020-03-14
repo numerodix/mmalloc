@@ -1,15 +1,16 @@
 # Adventures in writing a malloc
 
-A simple malloc implementation that uses two doubly linked lists:
+A halfway competent malloc implementation that uses doubly linked lists:
 
-- A used list that stores all blocks currently in use.
-- A free list that stores blocks previously allocated and then free'd.
+- One used list that stores all blocks currently in use.
+- N free lists, each storing unused blocks of the same size, 2^N bytes
+  large.
 
 When an allocation request comes in, we first try to satisfy it using a block
-from the free list. If no block large enough can be found, we increase the size
-of the heap to create a new block.
+from the free list that stores blocks of a matching size. If no block can be
+found, we increase the size of the heap to create a new block.
 
-No blocks from the free list are ever released back to the OS. The heap only
+No blocks from the free lists are ever released back to the OS. The heap only
 grows, never shrinks.
 
 Features:
@@ -18,15 +19,14 @@ Features:
   in order to make the blocks more reusable.
 - A mutex is used to ensure exclusive access to shared data structures.
 
-Most obvious shortcomings:
-- When picking a block from the free list the first block big enough is chosen,
-  with no effort to find one that is optimal size for the request.
+The implementation is functional enough and fast enough to run most programs,
+both single threaded and multi threaded, both command line programs and gui
+programs.
 
-The implementation is functional enough to run both single threaded and multi
-threaded programs with it, eg. ls, ps, cat, hostname, uname, javac, vim:
+Examples: ls, ps, cat, hostname, uname, gcc, javac, firefox, vim, kate:
 
 ```
-$ ./runprogram ls
+$ ./runprogram ls -l
 ```
 
 The code was developed in a test driven style. Run the tests with:
