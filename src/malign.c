@@ -43,7 +43,7 @@ size_t get_standard_size(size_t num) {
 }
 
 
-size_t get_log2(size_t size) {
+size_t get_base2_exponent(size_t size) {
     int counter = 0;
 
     while (size >>= 1) {

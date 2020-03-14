@@ -16,6 +16,5 @@ size_t next_power_of_2(size_t num);
 // Returns a standard size large enough to contain `num`
 size_t get_standard_size(size_t num);
 
-// Returns the log base 2 (most significant bit) of `size` where `size`
-// is a power of two (a standard size).
-size_t get_log2(size_t size);
+// Returns the base 2 exponent (position of the most significant bit) of `size`
+size_t get_base2_exponent(size_t size);
