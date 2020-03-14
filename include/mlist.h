@@ -58,7 +58,6 @@ block_t *pop_from_list(block_t **plist_head, size_t min_size);
 
 #define GET_FREE_LIST_HEAD() get_list_head(get_free_list_ptr())
 #define GET_FREE_LIST_TAIL() get_list_tail(get_free_list_ptr())
-#define POP_FROM_FREE_LIST(min_size) pop_from_list(get_free_list_ptr(), min_size)
 
 
 // Prepends the block to the right free list, based on block->size_index
