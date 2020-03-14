@@ -3,4 +3,6 @@
 support/gen-makefile.py
 make build-bench-tests
 
-time $@
+for i in $(seq 1 3); do
+    time $@
+done
