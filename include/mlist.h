@@ -10,13 +10,13 @@ struct _block {
     struct _block* prev_block;
     struct _block* next_block;
     size_t size;
-    size_t _padding;  // to make the block aligned on 16 bytes
+    size_t size_index;
 };
 typedef struct _block block_t;
 
 
 // Constructs a block at location `ptr`.
-block_t *init_block(void *ptr, size_t size);
+block_t *init_block(void *ptr, size_t size, size_t size_index);
 
 // Returns a pointer to the data location of a block
 void *get_block_data_pointer(block_t* block);
@@ -57,3 +57,9 @@ block_t *pop_from_list(block_t **plist_head, size_t min_size);
 #define GET_FREE_LIST_TAIL() get_list_tail(get_free_list_ptr())
 #define PREPEND_TO_FREE_LIST(block) prepend_to_list(get_free_list_ptr(), block)
 #define POP_FROM_FREE_LIST(min_size) pop_from_list(get_free_list_ptr(), min_size)
+
+
+block_t *pop_list_head(block_t **plist_head);
+
+void prepend_to_a_free_list(block_t *block);
+block_t *pop_from_a_free_list(size_t size_index);

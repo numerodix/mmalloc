@@ -12,9 +12,9 @@ int main() {
     // The variable we'll use for lookups
     block_t *block;
 
-    block_t *fst = init_block(&dummy1, 27);
-    block_t *snd = init_block(&dummy2, 33);
-    block_t *thd = init_block(&dummy3, 48);
+    block_t *fst = init_block(&dummy1, 27, 0);
+    block_t *snd = init_block(&dummy2, 33, 0);
+    block_t *thd = init_block(&dummy3, 48, 0);
 
     // Before prepending there are no used blocks
 

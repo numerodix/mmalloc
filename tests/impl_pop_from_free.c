@@ -12,9 +12,9 @@ int main() {
     // The variables we'll use for testing
     block_t *block;
 
-    block_t *fst = init_block(&dummy1, 48);
-    block_t *snd = init_block(&dummy2, 33);
-    block_t *thd = init_block(&dummy3, 25);
+    block_t *fst = init_block(&dummy1, 48, 0);
+    block_t *snd = init_block(&dummy2, 33, 0);
+    block_t *thd = init_block(&dummy3, 25, 0);
 
     // Prepend the first block and pop it again
 

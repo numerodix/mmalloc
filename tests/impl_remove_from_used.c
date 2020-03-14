@@ -13,9 +13,9 @@ int main() {
     block_t *block;
     int res;
 
-    block_t *fst = init_block(&dummy1, 27);
-    block_t *snd = init_block(&dummy2, 33);
-    block_t *thd = init_block(&dummy3, 48);
+    block_t *fst = init_block(&dummy1, 27, 0);
+    block_t *snd = init_block(&dummy2, 33, 0);
+    block_t *thd = init_block(&dummy3, 48, 0);
 
     // Cannot remove from an empty list
 

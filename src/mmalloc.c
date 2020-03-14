@@ -62,7 +62,7 @@ void *mmalloc(size_t size) {
     assert(res == 0);
 
     // create a block and add it to the used list
-    block = init_block(ptr_aligned, size_aligned);
+    block = init_block(ptr_aligned, size_aligned, 0);
     PREPEND_TO_USED_LIST(block);
 
     // exit critical section: release lock

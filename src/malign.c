@@ -6,9 +6,6 @@
 
 #define MIN_STD_SIZE 1 << 5
 
-#define MIN_SIZE_INDEX 5
-#define MAX_SIZE_INDEX 63
-
 
 size_t align_location(size_t location, size_t alignment) {
     size_t mask = ULONG_MAX ^ (alignment - 1);

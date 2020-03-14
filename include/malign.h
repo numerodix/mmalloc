@@ -4,6 +4,10 @@
 #include <unistd.h>
 
 
+#define MIN_SIZE_INDEX 5
+#define MAX_SIZE_INDEX 63
+
+
 // Aligns `location` on an `alignment` boundary
 size_t align_location(size_t location, size_t alignment);
 
