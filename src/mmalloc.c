@@ -24,8 +24,8 @@ pthread_mutex_t lock;
 
 
 void *mmalloc(size_t size) {
-    size_t exponent = get_base2_exponent(size) + 1;
-    size_t size_index = get_size_index(exponent);
+    size_t exponent = get_base2_exponent(size);
+    size_t size_index = get_size_index(exponent + 1);
 
     // enter critical section: take lock
     assert(0 == pthread_mutex_lock(&lock));
