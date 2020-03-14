@@ -18,6 +18,7 @@ Features:
 - Blocks are sized by rounding up the size requested to the next power of 2,
   in order to make the blocks more reusable.
 - A mutex is used to ensure exclusive access to shared data structures.
+- All list operations are O(1).
 
 The implementation is functional enough and fast enough to run most programs,
 both single threaded and multi threaded, both command line programs and gui
