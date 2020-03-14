@@ -33,7 +33,7 @@ $ ./runprogram ls -l
 The code was developed in a test driven style. Run the tests with:
 
 ```
-$ ./test
+$ ./unittest
 ```
 
 Portability:

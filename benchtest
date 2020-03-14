@@ -1,0 +1,6 @@
+#!/bin/bash
+
+support/gen-makefile.py
+make build-bench-tests
+
+time $@

@@ -42,7 +42,8 @@ SOFLAGS_PRIVATE = [
 BINARIES_LOCATION = 'bin'
 HEADERS_LOCATION = 'include'
 SOURCES_LOCATION = 'src'
-TESTS_LOCATION = 'tests'
+BENCH_TESTS_LOCATION = 'benchtests'
+UNIT_TESTS_LOCATION = 'unittests'
 
 PUBLIC_SHARED_LIB_NAME = os.path.join(BINARIES_LOCATION, 'libmalloc.so')
 PUBLIC_OPT_SHARED_LIB_NAME = os.path.join(BINARIES_LOCATION, 'libmalloc-opt.so')
@@ -94,8 +95,11 @@ class Generator:
     def get_source_files(self):
         return self.get_cfiles(SOURCES_LOCATION)
 
-    def get_test_files(self):
-        return self.get_cfiles(TESTS_LOCATION)
+    def get_bench_test_files(self):
+        return self.get_cfiles(BENCH_TESTS_LOCATION)
+
+    def get_unit_test_files(self):
+        return self.get_cfiles(UNIT_TESTS_LOCATION)
 
     # formatting
 
@@ -146,14 +150,13 @@ class Generator:
 
         return Target(name=target, block=block)
 
-    def generate_test_targets(self, shared_libs):
+    def generate_test_targets(self, test_files, shared_libs):
         headers = self.get_header_files()
         sources = self.get_source_files()
-        tests = self.get_test_files()
 
         targets = [
             self.generate_test_target(testfile, sources, headers, shared_libs)
-            for testfile in tests
+            for testfile in test_files
         ]
         targets.sort(key=lambda target: target.name)
 
@@ -211,15 +214,19 @@ class Generator:
 
         return [public_target, public_opt_target, private_target]
 
-    def generate_group_targets(self, test_targets, shared_lib_targets):
-        build_tests_name = 'build-tests'
-        deps = ' '.join([target.name for target in test_targets])
-        build_tests_block = '%s: %s' % (build_tests_name, deps)
-        build_tests = Target(name=build_tests_name, block=build_tests_block)
+    def generate_group_targets(self, bench_test_targets, unit_test_targets,
+                               shared_lib_targets):
 
-        run_tests_name = 'run-tests'
+        # bench tests
+
+        build_tests_name = 'build-bench-tests'
+        deps = ' '.join([target.name for target in bench_test_targets])
+        build_tests_block = '%s: %s' % (build_tests_name, deps)
+        build_bench_tests = Target(name=build_tests_name, block=build_tests_block)
+
+        run_tests_name = 'run-bench-tests'
         stmts = self.to_block(
-            '\t./%s' % target.name for target in test_targets
+            '\t./%s' % target.name for target in bench_test_targets
         )
         run_tests_block = (
             '%(target)s:\n'
@@ -228,12 +235,39 @@ class Generator:
             target=run_tests_name,
             stmts=stmts,
         )
-        run_tests = Target(name=run_tests_name, block=run_tests_block)
+        run_bench_tests = Target(name=run_tests_name, block=run_tests_block)
 
-        tests_name = 'tests'
-        tests_block = '%s: %s %s' % (
+        tests_name = 'bench-tests'
+        tests_block = '%s: %s %s\n' % (
             tests_name, build_tests_name, run_tests_name)
-        tests = Target(name=tests_name, block=tests_block)
+        bench_tests = Target(name=tests_name, block=tests_block)
+
+        # unit tests
+
+        build_tests_name = 'build-unit-tests'
+        deps = ' '.join([target.name for target in unit_test_targets])
+        build_tests_block = '%s: %s' % (build_tests_name, deps)
+        build_unit_tests = Target(name=build_tests_name, block=build_tests_block)
+
+        run_tests_name = 'run-unit-tests'
+        stmts = self.to_block(
+            '\t./%s' % target.name for target in unit_test_targets
+        )
+        run_tests_block = (
+            '%(target)s:\n'
+            '%(stmts)s'
+        ) % dict(
+            target=run_tests_name,
+            stmts=stmts,
+        )
+        run_unit_tests = Target(name=run_tests_name, block=run_tests_block)
+
+        tests_name = 'unit-tests'
+        tests_block = '%s: %s %s\n' % (
+            tests_name, build_tests_name, run_tests_name)
+        unit_tests = Target(name=tests_name, block=tests_block)
+
+        # shared libs
 
         build_shared_libs_name = 'build-shared-libraries'
         deps = ' '.join([target.name for target in shared_lib_targets])
@@ -242,6 +276,8 @@ class Generator:
             name=build_shared_libs_name,
             block=build_shared_lib_block,
         )
+
+        # other targets
 
         clean_name = 'clean'
         clean_block = (
@@ -254,9 +290,12 @@ class Generator:
         clean = Target(name=clean_name, block=clean_block)
 
         targets = [
-            build_tests,
-            run_tests,
-            tests,
+            build_bench_tests,
+            run_bench_tests,
+            bench_tests,
+            build_unit_tests,
+            run_unit_tests,
+            unit_tests,
             build_shared_libs,
             clean,
         ]
@@ -282,14 +321,29 @@ class Generator:
             sep=2
         )
 
-        test_targets = self.generate_test_targets([private_shared_lib_target])
-        test_targets_block = self.to_block(
-            [target.block for target in test_targets],
+        bench_tests = self.get_bench_test_files()
+        bench_test_targets = self.generate_test_targets(
+            bench_tests,
+            [private_shared_lib_target]
+        )
+        bench_test_targets_block = self.to_block(
+            [target.block for target in bench_test_targets],
+            sep=2
+        )
+
+        unit_tests = self.get_unit_test_files()
+        unit_test_targets = self.generate_test_targets(
+            unit_tests,
+            [private_shared_lib_target]
+        )
+        unit_test_targets_block = self.to_block(
+            [target.block for target in unit_test_targets],
             sep=2
         )
 
         group_targets = self.generate_group_targets(
-            test_targets,
+            bench_test_targets,
+            unit_test_targets,
             [public_shared_lib_target, public_opt_shared_lib_target],
         )
         group_targets_block = self.to_block(
@@ -303,7 +357,8 @@ class Generator:
             phony_block,
             constants_block,
             shared_lib_targets_block,
-            test_targets_block,
+            bench_test_targets_block,
+            unit_test_targets_block,
             group_targets_block,
         ]
 
