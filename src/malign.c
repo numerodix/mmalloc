@@ -56,6 +56,7 @@ size_t get_base2_exponent(size_t size) {
     return counter;
 }
 
+
 size_t get_size_index(size_t exponent) {
     if (exponent < MIN_SIZE_INDEX) {
         return MIN_SIZE_INDEX;
@@ -66,4 +67,9 @@ size_t get_size_index(size_t exponent) {
     }
 
     return exponent;
+}
+
+
+size_t get_power_of_2(size_t size_index) {
+    return 1UL << size_index;
 }

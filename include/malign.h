@@ -21,3 +21,6 @@ size_t get_base2_exponent(size_t size);
 
 // Returns the size index (range capped exponent) given `exponent`
 size_t get_size_index(size_t exponent);
+
+// Returns 2^size_index
+size_t get_power_of_2(size_t size_index);
