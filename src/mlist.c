@@ -7,10 +7,6 @@
 // Pointers to the lists
 
 block_t *USED_BLOCKS = NULL;
-block_t *FREE_BLOCKS = NULL;
-
-#define NUM_FREE_LISTS (MAX_SIZE_INDEX - MIN_SIZE_INDEX)
-
 block_t *FREE_BLOCKS_LIST_POINTERS[MAX_SIZE_INDEX + 1] = {NULL};
 
 
@@ -39,11 +35,6 @@ block_t *as_block_pointer(void *ptr) {
 
 
 // List operations
-
-
-block_t **get_free_list_ptr() {
-    return &FREE_BLOCKS;
-}
 
 
 block_t **get_used_list_ptr() {
