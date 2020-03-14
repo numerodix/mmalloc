@@ -6,6 +6,9 @@
 
 #define MIN_STD_SIZE 1 << 5
 
+#define MIN_SIZE_INDEX 5
+#define MAX_SIZE_INDEX 63
+
 
 size_t align_location(size_t location, size_t alignment) {
     size_t mask = ULONG_MAX ^ (alignment - 1);
@@ -51,4 +54,16 @@ size_t get_base2_exponent(size_t size) {
     }
 
     return counter;
+}
+
+size_t get_size_index(size_t exponent) {
+    if (exponent < MIN_SIZE_INDEX) {
+        return MIN_SIZE_INDEX;
+    }
+
+    if (exponent > MAX_SIZE_INDEX) {
+        return MAX_SIZE_INDEX;
+    }
+
+    return exponent;
 }

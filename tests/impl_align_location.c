@@ -35,4 +35,6 @@ int main() {
     aligned = align_location(0x56090b94b41d, 16);
     assert(aligned == 0x56090b94b410);
     assert(true == is_aligned(aligned, 16));
+
+    return 0;
 }

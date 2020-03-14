@@ -20,4 +20,6 @@ int main() {
     assert(get_base2_exponent(1UL << 51) == 51);
 
     assert(get_base2_exponent(1UL << 63) == 63);
+
+    return 0;
 }
