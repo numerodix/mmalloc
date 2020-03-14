@@ -10,6 +10,7 @@ struct _block {
     struct _block* prev_block;
     struct _block* next_block;
     size_t size_index;
+    size_t _unused;  // padding
 };
 typedef struct _block block_t;
 
