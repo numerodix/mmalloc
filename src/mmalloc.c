@@ -20,7 +20,7 @@
 
 // We need a mutex to synchronize access to pointers read/written from
 // different threads.
-pthread_mutex_t lock;
+static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 
 void *mmalloc(size_t size) {
