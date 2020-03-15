@@ -6,7 +6,7 @@
 
 // Pointers to the lists
 
-// A linked list of used blocks of any size.
+// A pointer to a linked list of used blocks of any size.
 block_t *USED_BLOCKS = NULL;
 
 // An array of pointers. Each pointer points to the head of a linked
