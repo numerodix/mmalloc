@@ -368,7 +368,7 @@ class Generator:
     def write_file(self):
         contents = self.generate_file()
 
-        with open(self.outfile, 'wb+') as fl:
+        with open(self.outfile, 'w+') as fl:
             fl.write(contents)
 
 
